@@ -1,0 +1,244 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{msheet}[2023/05/30 Package for writing lesson sheets.]
+
+\PassOptionsToPackage{many}{tcolorbox}
+\PassOptionsToPackage{svgnames}{xcolor}
+
+\DeclareOption*{\PackageWarning{msheet}{Unknown ‘\CurrentOption’}}
+\ProcessOptions\relax
+
+\RequirePackage{enumitem}
+\RequirePackage{etoolbox}
+\RequirePackage{fontawesome}
+\RequirePackage{tasks}
+\RequirePackage{tcolorbox}
+\RequirePackage{xcolor}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Command definitions
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcounter{exccnt}
+\NewDocumentCommand{\msexercise}{sO{}}{%
+	\IfBooleanTF#1%
+	{%
+		\setlength{\parindent}{0ex}
+		\vskip 2.3ex
+		{\bfseries Aufgabe}\quad{\itshape #2}
+		\vskip 0.3ex
+	}{%
+		\refstepcounter{exccnt}%
+		\setlength{\parindent}{0ex}
+		\vskip 2.3ex
+		{\bfseries Aufgabe~\arabic{exccnt}}\quad{\itshape #2}
+		\vskip 0.3ex
+	}%
+}%
+
+\NewDocumentCommand{\mpexercise}{sO{}}{%
+	\IfBooleanTF#1%
+	{%
+		\setlength{\parindent}{0ex}
+		\vskip 2.3ex
+		{\bfseries Aufgabe}\quad{\itshape #2}
+	}{%
+		\refstepcounter{exccnt}%
+		\setlength{\parindent}{0ex}
+		\vskip 2.3ex
+		{\bfseries Aufgabe~\arabic{exccnt}}\quad{\itshape #2}
+	}%
+}%
+
+%%% ... on top of tikz
+%% 'new page' box
+\newcommand{\mibnpsymbol}{\faAngleDoubleRight\faAngleDoubleRight}
+\newcommand{\mibnp}{%
+	\vfill\hfill
+	\tikz[baseline={(a.base)}]%
+		\node[%
+			draw=Cyan!60!black , 
+			rounded corners=0.5ex ,
+			fill=Cyan!6!white ,
+			inner sep=4pt
+			] (a) {\small{\sffamily\mibnpsymbol\;Bitte wenden!\;\mibnpsymbol}};
+	\newpage
+}%
+
+%% inline boxes
+\newcommand{\mibcolor}[2][Chocolate]{%
+	\tikz[baseline={(a.base)}]%
+		\node[%
+			draw=#1!60!black , 
+			rounded corners=0.5ex ,
+			fill=#1!6!white ,
+			inner sep=2pt
+			] (a) {#2};
+}%
+
+\newcommand{\mibred}[1]{%
+	\tikz[baseline={(a.base)}]%
+		\node[%
+			draw=FireBrick!60!black , 
+			rounded corners=0.5ex ,
+			fill=FireBrick!6!white ,
+			inner sep=2pt
+			] (a) {#1};
+}%
+
+\newcommand{\mibgreen}[1]{%
+	\tikz[baseline={(a.base)}]%
+		\node[%
+			draw=LightGreen!60!black , 
+			rounded corners=0.5ex ,
+			fill=LightGreen!6!white ,
+			inner sep=2pt
+			] (a) {#1};
+}%
+
+\newcommand{\mibblue}[1]{%
+	\tikz[baseline={(a.base)}]%
+		\node[%
+			draw=DodgerBlue!60!black , 
+			rounded corners=0.5ex ,
+			fill=DodgerBlue!6!white ,
+			inner sep=2pt
+			] (a) {#1};
+}%
+
+%%% ... on top of tcolorbox
+%% boxes with title
+\newtcolorbox{mtbcolor}[2][Chocolate]{%
+	size=fbox ,
+	fonttitle=\large\sffamily\bfseries ,
+	fontupper=\normalsize\sffamily\mdseries ,
+	colback=#1!6!white ,
+	colframe=#1!24!black ,
+	colbacktitle=#1!50!white ,
+	coltitle=#1!12!black ,
+	title={#2}
+}%
+
+\newtcolorbox{mtbred}[1][Merksatz]{%
+	size=fbox ,
+	fonttitle=\large\sffamily\bfseries ,
+	fontupper=\normalsize\sffamily\mdseries ,
+	colback=Yellow!6!white ,
+	colframe=FireBrick!24!black ,
+	colbacktitle=FireBrick!70!white ,
+	coltitle=FireBrick!12!black ,
+	title={#1}
+}%
+
+\newtcolorbox{mtbgreen}[1][Versuch]{%
+	fonttitle=\large\sffamily\bfseries ,
+	fontupper=\normalsize\sffamily\mdseries ,
+	size=fbox ,
+	colback=Yellow!6!white ,
+	colframe=LightGreen!24!black ,
+	colbacktitle=LightGreen!80!white ,
+	coltitle=LightGreen!12!black ,
+	title={#1}
+}%
+
+\newtcolorbox{mtbblue}[1][Beispiel]{%
+	size=fbox ,
+	fonttitle=\large\sffamily\bfseries ,
+	fontupper=\normalsize\sffamily\mdseries ,
+	colback=Yellow!6!white ,
+	colframe=DodgerBlue!24!black ,
+	colbacktitle=DodgerBlue!50!white ,
+	coltitle=DodgerBlue!12!black ,
+	title={#1}
+}%
+
+%% boxes without title
+\newtcolorbox{mbcolor}[1][Chocolate]{%
+	size=fbox ,
+	colback=#1!6!white ,
+	colframe=#1!24!black ,
+}%
+
+\newtcolorbox{mbinfo}{%
+	size=fbox ,
+	colback=LightSeaGreen!12!white ,
+	colframe=LightSeaGreen!24!black ,
+}%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Environment definitions
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% ... on top of the enumitem package
+\newlist{mtasklist}{enumerate}{4}
+\setlist*[mtasklist, 1]{%
+	label*=\textbf{\arabic*.} ,
+	wide=0pt ,
+	labelwidth=1.5cm , 
+	leftmargin=! ,
+}%
+\setlist*[mtasklist, 2]{
+	label*=\textbf{\arabic*.} ,
+	align=left , 
+	labelwidth=1.5cm , 
+	leftmargin=0cm , 
+}%
+\setlist*[mtasklist, 3]{%
+	label*=\textbf{\arabic*.} ,
+	align=left , 
+	labelwidth=1.5cm , 
+	leftmargin=0cm ,
+}%
+\setlist*[mtasklist, 4]{
+	label*=\textbf{\arabic*.} ,
+	align=left , 
+	labelwidth=1.5cm , 
+	leftmargin=0cm , 
+}%
+
+\newlist{mexerciselist}{enumerate}{4}
+\setlist*[mexerciselist, 1]{%
+	label=\textbf{Aufgabe~\arabic*} ,
+	wide=0pt ,
+	labelwidth=0.5cm , 
+	labelsep=0.35cm , 
+	leftmargin=! , 
+}%
+\setlist*[mexerciselist, 2]{%
+	label=\textbf{\alph*)} ,
+	align=left , 
+	labelwidth=0.5cm , 
+	leftmargin=0cm , 
+}%
+\setlist*[mexerciselist, 3]{%
+	label=\textbf{\roman*.} ,
+	align=left , 
+	labelwidth=0.5cm , 
+	leftmargin=0cm , 
+}%
+\setlist*[mexerciselist, 4]{%
+	label=\textbf{\Alph*.} ,
+	align=left , 
+	labelwidth=0.5cm , 
+	leftmargin=0cm , 
+}%
+
+%%% ... on top of the tasks package
+\NewTasksEnvironment[%
+	label=\textbf{\alph*)} , 
+	item-indent=2em , 
+	label-width=2em , 
+	label-offset=0pt ,
+	]{mexccolumns}[\exc]
+
+\NewTasksEnvironment[%
+	label=\textbf{\arabic*.} , 
+	item-indent=2em , 
+	label-width=2em , 
+	label-offset=0pt ,
+]{mtaskcolumns}[\task]
+
+\NewTasksEnvironment[%
+	label=\faThumbsOUp ,
+	item-indent=2em , 
+	label-width=2em , 
+	label-offset=-2pt
+]{mdone}[*]
+
