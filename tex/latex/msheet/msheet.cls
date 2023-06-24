@@ -49,7 +49,7 @@
 \RequirePackage[T1]{fontenc}
 \RequirePackage{microtype}
 \RequirePackage[ngerman]{babel}
-\RequirePackage{fontawesome}
+%\RequirePackage{fontawesome}
 
 \RequirePackage{setspace}
 
@@ -96,6 +96,11 @@
 \cfoot{}
 \regtotcounter{page}
 \ofoot{\ifnumcomp{\totvalue{page}}{>}{1}{\textbf{\thepage}}{}}
+
+\AddToLayerPageStyleOptions{scrheadings}
+{oninit={%
+		\ifnumcomp{\the\c@page}{>}{1}{\KOMAoptions{headsepline=true}}{\KOMAoptions{headsepline=false}}
+}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%                          TITLE 
