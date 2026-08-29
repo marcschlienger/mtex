@@ -1,0 +1,99 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesClass{msheet}[2023/06/25 Class for writing oral exam sheets.]
+
+\DeclareRobustCommand\exam[1]{\gdef\@exam{#1}}
+\newcommand{\@exam}{\@latex@warning@no@line{No \noexpand\exam given}}
+
+\DeclareRobustCommand\license[1]{\gdef\@license{#1}}
+\newcommand{\@license}{\@latex@warning@no@line{No \noexpand\license given}}
+
+\DeclareRobustCommand\logo[1]{\gdef\@logo{#1}}
+\newcommand{\@logo}{Rolf-Benz-Schule.png}
+
+\DeclareOption{twoside}{\OptionNotUsed}
+
+\DeclareOption{singlespacing}{\PassOptionsToPackage{\CurrentOption}{setspace}}
+\DeclareOption{onehalfspacing}{\PassOptionsToPackage{\CurrentOption}{setspace}}
+\DeclareOption{doublespacing}{\PassOptionsToPackage{\CurrentOption}{setspace}}
+
+\DeclareOption*{\PassOptionsToClass{\CurrentOption}{scrartcl}}
+\ProcessOptions\relax
+\LoadClass{scrartcl}
+
+\RequirePackage{etoolbox}
+\RequirePackage{totcount}
+
+\RequirePackage[footsepline]{scrlayer-scrpage}
+
+\RequirePackage[bitstream-charter]{mathdesign}
+\RequirePackage[T1]{fontenc}
+\RequirePackage{microtype}
+\RequirePackage[ngerman]{babel}
+
+\RequirePackage{setspace}
+
+\RequirePackage{graphicx}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                          PAGE LAYOUT 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setlength{\textwidth}{\paperwidth}
+\addtolength{\textwidth}{-30mm}
+\setlength{\oddsidemargin}{0pt}
+\setlength{\evensidemargin}{0pt}
+\setlength{\headheight}{15pt}
+\setlength{\headsep}{15pt}
+\setlength{\topmargin}{0mm}
+\addtolength{\topmargin}{-\headheight}
+\addtolength{\topmargin}{-\headsep}
+\setlength{\footskip}{5mm}
+\setlength{\textheight}{\paperheight}
+\addtolength{\textheight}{-35mm}
+%\setlength{\marginparwidth}{10mm}
+%\setlength{\marginparsep}{5pt}
+
+%Head and foot
+\pagestyle{scrheadings}
+\setlength{\headheight}{24.34654pt}
+\setlength{\footheight}{23.04692pt}
+\setkomafont{pageheadfoot}{\sffamily\mdseries\scriptsize}
+
+\ihead{}
+\chead{}
+\ohead{\includegraphics[width=153pt]{\@logo}\hspace{5pt}}
+
+\ifstrempty{\@license}{%
+	\ifoot{\copyright\;\the\year\;\@author}
+}{%
+	\ifoot{\copyright\;\the\year\;\@author\;(\@license)}
+}
+\cfoot{}
+\regtotcounter{page}
+\ofoot{\ifnumcomp{\totvalue{page}}{>}{1}{\textbf{\thepage}}{}}
+
+\AddToLayerPageStyleOptions{scrheadings}
+{oninit={%
+		\ifnumcomp{\the\c@page}{>}{1}{\KOMAoptions{headsepline=true}}{\KOMAoptions{headsepline=false}}
+}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                          TITLE 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\renewcommand{\maketitle}{%
+	{
+		\vspace*{-38pt}
+		\fontsize{14}{17}\fontfamily{phv}\fontseries{b}\selectfont 		
+		\tabulinesep=4pt%
+		\extrarowsep=2pt%
+		\arrayrulewidth=0.5pt%
+		\begin{tabular}{|m{8cm}|m{8cm}|}
+			\hline
+				\@exam								& \@title \\
+			\hline
+				Fachlehrer: \@author	& \@date \\
+			\hline
+		\end{tabular}
+	}
+  \medskip
+}
+

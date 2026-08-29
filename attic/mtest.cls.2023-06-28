@@ -1,0 +1,82 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesClass{mtest}[2023/06/28 Class for writing test sheets.]
+
+\DeclareRobustCommand\logo[1]{\gdef\@logo{#1}}
+\newcommand{\@logo}{Rolf-Benz-Schule.png}
+
+\DeclareRobustCommand\class[1]{\gdef\@class{#1}}
+\newcommand{\@class}{\@latex@warning@no@line{No \noexpand\class given}}
+
+\DeclareRobustCommand\testnumber[1]{\gdef\@testnumber{#1}}
+\newcommand{\@testnumber}{\@latex@warning@no@line{No \noexpand\testnumber given}}
+
+\DeclareOption{twoside}{\OptionNotUsed}
+
+\DeclareOption{singlespacing}{\PassOptionsToPackage{\CurrentOption}{setspace}}
+\DeclareOption{onehalfspacing}{\PassOptionsToPackage{\CurrentOption}{setspace}}
+\DeclareOption{doublespacing}{\PassOptionsToPackage{\CurrentOption}{setspace}}
+
+\PassOptionsToPackage{left=20mm, right=20mm, top=25mm}{geometry}
+\PassOptionsToPackage{footsepline}{scrlayer-scrpage}
+\PassOptionsToPackage{bitstream-charter}{mathdesign}
+\PassOptionsToPackage{T1}{fontenc}
+\PassOptionsToPackage{ngerman}{babel}
+\PassOptionsToPackage{svgnames, table}{xcolor}
+
+\DeclareOption*{\PassOptionsToClass{\CurrentOption}{scrartcl}}
+\ProcessOptions\relax
+\LoadClass{scrartcl}
+
+\RequirePackage{etoolbox}
+\RequirePackage{totcount}
+\RequirePackage{geometry}
+\RequirePackage{scrlayer-scrpage}
+\RequirePackage{mathdesign}
+\RequirePackage{fontenc}
+\RequirePackage{microtype}
+\RequirePackage{babel}
+\RequirePackage{setspace}
+\RequirePackage{graphicx}
+\RequirePackage{tabularx}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                          PAGE LAYOUT 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Head and foot
+\pagestyle{scrheadings}
+\setkomafont{pageheadfoot}{\sffamily\mdseries\scriptsize}
+
+\ihead{\hspace{2pt}\@class}
+\chead{}
+\ohead{\smash{\includegraphics[width=153pt]{\@logo}}\hspace{2pt}}
+
+\ifoot{}
+\regtotcounter{page}
+\cfoot{\ifnumcomp{\totvalue{page}}{>}{1}{\textbf{\thepage}}{}}
+
+\AddToLayerPageStyleOptions{scrheadings}
+{oninit={%
+		\ifnumcomp{\the\c@page}{>}{1}{\KOMAoptions{headsepline=true}}{\KOMAoptions{headsepline=false}}
+}}
+\ofoot{}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                          TITLE 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\renewcommand{\maketitle}{%
+	{
+		\fontsize{14}{17}\fontfamily{phv}\selectfont 		
+		\renewcommand{\arrayrulewidth}{0.7pt}
+		\centering
+		\vspace*{\dimexpr1.5\parsep-\baselineskip-\headsep\relax}
+		\begin{tabularx}{\linewidth}{| >{\centering\arraybackslash}X | >{\centering\arraybackslash}p{32mm} | }
+			\hline
+			{\bfseries \@title}					& Klassenarbeit~\@testnumber \\
+			\hline
+			\multicolumn{1}{|l|}{Name:}	& \@date \\
+			\hline
+		\end{tabularx}
+	}
+  \medskip
+}
+

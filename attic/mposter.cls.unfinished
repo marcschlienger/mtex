@@ -1,0 +1,165 @@
+%% mposter.cls -- class for writing posters.
+%%
+%% Copyright (C) 2022--2026 Marc Schlienger <marc.schlienger@posteo.de>
+%% Released under the LaTeX Project Public License v1.3c or later.
+%%
+%% STATUS: UNFINISHED.  This is a copy of msheet.cls with \LoadClass{scrartcl}
+%% replaced by \LoadClass{tikzposter}; the page-style and \maketitle code below
+%% is still written for KOMA-Script/scrartcl and does not match tikzposter's
+%% model (tikzposter brings its own \maketitle[<options>] and title block).
+%% Do not use without testing.  See attic/ for the original.
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesClass{mposter}[2022/05/30 Class for writing posters.]
+
+\newif\if@rounded		\@roundedfalse
+\DeclareOption{rounded}{\@roundedtrue}
+
+\DeclareRobustCommand\license[1]{\gdef\@license{#1}}
+\newcommand{\@license}{}
+
+\DeclareRobustCommand\attribution[1]{\gdef\@attribution{#1}}
+\newcommand{\@attribution}{}
+
+\DeclareRobustCommand\logo[1]{\gdef\@logo{#1}}
+\newcommand{\@logo}{Rolf-Benz-Schule.png}
+
+\DeclareOption{twoside}{\OptionNotUsed}
+
+\newcommand{\icon}{edit.png}
+\DeclareOption{worksheet}{\renewcommand{\icon}{edit.png}}
+\DeclareOption{factsheet}{\renewcommand{\icon}{info.png}}
+\DeclareOption{groupwork}{\renewcommand{\icon}{teamwork.png}}
+\DeclareOption{schedulework}{\renewcommand{\icon}{task.png}}
+\DeclareOption{experiment}{\renewcommand{\icon}{flask.png}}
+
+\DeclareOption{singlespacing}{\PassOptionsToPackage{\CurrentOption}{setspace}}
+\DeclareOption{onehalfspacing}{\PassOptionsToPackage{\CurrentOption}{setspace}}
+\DeclareOption{doublespacing}{\PassOptionsToPackage{\CurrentOption}{setspace}}
+
+\newcommand{\titlebackcolor}{white}
+\DeclareOption{cyan}{\renewcommand{\titlebackcolor}{DarkCyan}}
+\DeclareOption{grey}{\renewcommand{\titlebackcolor}{LightSlateGray}}
+\DeclareOption{white}{\renewcommand{\titlebackcolor}{white}}
+\DeclareOption{yellow}{\renewcommand{\titlebackcolor}{Yellow}}
+
+\PassOptionsToPackage{many}{tcolorbox}
+\PassOptionsToPackage{svgnames, table}{xcolor}
+
+\DeclareOption*{\PassOptionsToClass{\CurrentOption}{tikzposter}}
+\ProcessOptions\relax
+\LoadClass{tikzposter}
+
+\RequirePackage{etoolbox}
+\RequirePackage{totcount}
+
+\RequirePackage[footsepline]{scrlayer-scrpage}
+
+\RequirePackage[bitstream-charter]{mathdesign}
+\RequirePackage[T1]{fontenc}
+\RequirePackage{microtype}
+\RequirePackage[ngerman]{babel}
+%\RequirePackage{fontawesome}
+
+\RequirePackage{setspace}
+
+\RequirePackage{hyperref}
+
+\RequirePackage{graphicx}
+\RequirePackage{tcolorbox}
+
+\RequirePackage{xcolor}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                          PAGE LAYOUT 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\setlength{\textwidth}{\paperwidth}
+%\addtolength{\textwidth}{-4cm}
+%\setlength{\oddsidemargin}{0pt}
+%\setlength{\evensidemargin}{0pt}
+%\setlength{\headheight}{15pt}
+%\setlength{\headsep}{15pt}
+%\setlength{\topmargin}{0in}
+%\addtolength{\topmargin}{-\headheight}
+%\addtolength{\topmargin}{-\headsep}
+%\setlength{\footskip}{30pt}
+%\setlength{\textheight}{\paperheight}
+%\addtolength{\textheight}{-4cm}
+%\setlength{\marginparwidth}{.5cm}
+%\setlength{\marginparsep}{5pt}
+%
+%Head and foot
+\pagestyle{scrheadings}
+\setlength{\headheight}{24.34654pt}
+\setlength{\footheight}{23.04692pt}
+\setkomafont{pageheadfoot}{\sffamily\mdseries\scriptsize}
+
+\ihead{}
+\chead{}
+\ohead{\includegraphics[width=153pt]{\@logo}\hspace{5pt}}
+
+%% Evaluated at shipout, so \license/\attribution may be set in the preamble.
+\ifoot{%
+	\ifdefempty{\@attribution}{}{\@attribution\;}%
+	\copyright\;\the\year\;\@author
+	\ifdefempty{\@license}{}{\;(\@license)}%
+}
+\AtBeginDocument{%
+	\ifdefempty{\@license}%
+		{\ClassWarningNoLine{mposter}{No \noexpand\license given}}{}%
+	\ifdefempty{\@attribution}%
+		{\ClassWarningNoLine{mposter}{No \noexpand\attribution given}}{}%
+}
+\cfoot{}
+\regtotcounter{page}
+\ofoot{\ifnumcomp{\totvalue{page}}{>}{1}{\textbf{\thepage}}{}}
+
+\AddToLayerPageStyleOptions{scrheadings}
+{oninit={%
+		\ifnumcomp{\the\c@page}{>}{1}{\KOMAoptions{headsepline=true}}{\KOMAoptions{headsepline=false}}
+}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                          TITLE 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\hypersetup{colorlinks=true, linkcolor=blue, filecolor=magenta, urlcolor=cyan}
+\if@rounded
+	\tcbset{mytitle/.style=
+		{%
+			sidebyside , 
+			sidebyside gap=0pt , 
+			lower separated=false , 
+			lefthand width=20pt , 
+			size=fbox , 
+			boxrule=0.6pt , 
+			colback=\titlebackcolor!6!white
+		}%
+	}%
+\else
+	\tcbset{mytitle/.style=
+		{%
+			sidebyside , 
+			sidebyside gap=0pt , 
+			lower separated=false , 
+			lefthand width=20pt , 
+			size=fbox , 
+			boxrule=0.6pt , 
+			colback=\titlebackcolor!6!white ,
+			sharp corners
+		}%
+	}%
+\fi
+
+\renewcommand{\maketitle}{%
+	{
+		\vspace*{-38pt}
+		\fontsize{14}{17}\fontfamily{phv}\fontseries{b}\selectfont 		
+		\begin{tcolorbox}[mytitle]
+			\includegraphics[width=20pt]{\icon} 
+			\tcblower
+			\centering
+			\@title
+		\end{tcolorbox}
+	}
+  \medskip
+}
+

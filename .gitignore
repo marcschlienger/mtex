@@ -74,3 +74,10 @@ _minted*
 
 # xcolor
 *.xcp
+
+## macOS / TeX tree noise:
+.DS_Store
+ls-R
+
+## AUCTeX parser cache:
+auto/

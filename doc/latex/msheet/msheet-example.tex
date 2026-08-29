@@ -1,3 +1,7 @@
+%% msheet-example.tex -- example for the msheet class and package.
+%%
+%% This file replaces the 2023 example, which still used the long-gone
+%% "question"/"problem"/"msbluebox" API; that file is kept in attic/.
 \documentclass[factsheet, white, rounded, onehalfspacing, 11pt, a4paper]{msheet}
 
 \usepackage{mstuff}
@@ -7,11 +11,14 @@
 \title{An example showcasing the features of the msheet package}
 \author{Marc Schlienger}
 
-%\attribution{Modifizierte Version von \glqq{}\href{https://henriks-mathewerkstatt.de/2_13_Funktionen_zu_Kurven_mit_gegebenen_Eigenschaften.html}{Funktionen zu Kurven mit \ldots}\grqq{} von Henrik Horstmann.}
+\attribution{Aufgaben nach \href{https://math.mit.edu/~gs/}{Gilbert Strang}.}
 \license{\href{https://creativecommons.org/licenses/by/4.0}{CC BY 4.0}}
 
+%% Everything above can also be said through the key/value interface, which
+%% additionally replaces the old public \icon and \titlebackcolor commands:
+%\msheetsetup{type=experiment, titlecolor=DarkCyan, logo=Rolf-Benz-Schule.png}
+
 \newcommand{\commandToText}[1]{\texttt{\string#1}}
-%\setlength{\parindent}{0em}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
@@ -21,35 +28,48 @@
 \section{The msheet class (msheet.cls)}
 
 The icon on the left hand side of the title box is set according to the chosen
-document type. Available options are \textit{\color{FireBrick}worksheet}, 
-\textit{\color{FireBrick}factsheet}, \textit{\color{FireBrick}groupwork}, 
+document type. Available options are \textit{\color{FireBrick}worksheet},
+\textit{\color{FireBrick}factsheet}, \textit{\color{FireBrick}groupwork},
 \textit{\color{FireBrick}schedulework} and \textit{\color{FireBrick}experiment}.
 This document is of type \textit{\color{FireBrick}factsheet}.
 
 We can force a rounded title box using the option
 \textit{\color{FireBrick}rounded}. The background color of the title box might
-be chosen as well. Available options are \textit{\color{DarkCyan}cyan}, 
-\textit{\color{LightSlateGray}grey}, 
-\colorbox{LightSlateGray}{\textit{\color{white}white}} and 
+be chosen as well. Available options are \textit{\color{DarkCyan}cyan},
+\textit{\color{LightSlateGray}grey},
+\colorbox{LightSlateGray}{\textit{\color{white}white}} and
 \textit{\color{Yellow}yellow}.
 
 The line spacing can be set via the options
-\textit{\color{FireBrick}singlespacing}, 
+\textit{\color{FireBrick}singlespacing},
 \textit{\color{FireBrick}onehalfspacing} (this is the setting in this document)
 and \textit{\color{FireBrick}doublespacing}.
 
-A license and an attribution might be given via 
-\textit{\color{FireBrick}\commandToText{\license\{\}}} and 
-\textit{\color{FireBrick}\commandToText{\attribution\{\}}} respectively (see 
-footer).
+All of these can also be set with \commandToText{\msheetsetup}, which works
+in the preamble and in the document body:
+\textit{\color{FireBrick}\commandToText{\msheetsetup\{type=experiment,
+titlecolor=DarkCyan\}}}. The old public \commandToText{\icon} and
+\commandToText{\titlebackcolor} commands no longer exist.
+
+A license and an attribution might be given via
+\textit{\color{FireBrick}\commandToText{\license\{\}}} and
+\textit{\color{FireBrick}\commandToText{\attribution\{\}}} respectively (see
+footer). Both are optional; if they are omitted, the corresponding part of the
+footer is simply left out and a single warning is issued.
 
 \section{The msheet style (msheet.sty)}
 
-A few tasks originally placed by 
-\href{https://math.mit.edu/~gs/}{Gilbert Strang} are chosen to illustrate the
-package features.
+\subsection{Headings}
 
-\msexercise[\color{FireBrick} A subsection like task environment.]
+\commandToText{\mchapter} and \commandToText{\mtestpart} typeset centred
+coloured headings:
+
+\mchapter{Ein Kapitel}
+\mtestpart{Ein Teil}
+
+\subsection{Exercise headings}
+
+\msection[\color{FireBrick} A subsection like task environment.]
 Compute the average velocity between $t = 5$ and $t = 8$.
 \begin{mtaskcolumns}(3)
 	\task $f(t) = 6t$
@@ -59,7 +79,7 @@ Compute the average velocity between $t = 5$ and $t = 8$.
 	\task $f(t) = 6$
 \end{mtaskcolumns}
 
-\msexercise*[\color{FireBrick} And the same as starred version.]
+\msection*[\color{FireBrick} And the same as starred version.]
 Compute the average velocity between $t = 5$ and $t = 8$.
 \begin{mexccolumns}(3)
 	\exc $f(t) = 6t$ \exc $f(t) = 6t+2$
@@ -68,7 +88,7 @@ Compute the average velocity between $t = 5$ and $t = 8$.
 	\exc $f(t) = 6$
 \end{mexccolumns}
 
-\mpexercise[\color{DodgerBlue} A paragraph like task environment.]
+\msectionr[\color{DodgerBlue} A paragraph like task environment.]
 \begin{mexccolumns}(3)
 	\exc $f(t) = 6t$ \exc $f(t) = 6t+2$
 	\exc $f(t) = \frac{1}{2}at^2$
@@ -76,7 +96,7 @@ Compute the average velocity between $t = 5$ and $t = 8$.
 	\exc $f(t) = 6$
 \end{mexccolumns}
 
-\mpexercise*[\color{DodgerBlue} And the same as starred version.]
+\msectionr*[\color{DodgerBlue} And the same as starred version.]
 \begin{mtaskcolumns}(3)
 	\task $f(t) = 6t$
 	\task $f(t) = 6t+2$
@@ -84,8 +104,15 @@ Compute the average velocity between $t = 5$ and $t = 8$.
 	\task $f(t) = t-t^2$
 	\task $f(t) = 6$
 \end{mtaskcolumns}
+
+\medskip
+\noindent The old names \commandToText{\msexercise} and
+\commandToText{\mpexercise} still work; they are aliases of
+\commandToText{\msection} and \commandToText{\msectionr}.
 
 \mibnp{}
+
+\subsection{Lists}
 
 \begin{mtasklist}
 	\item When you jump and fall back your height is $y = 2t - t^2$ in the right
@@ -93,7 +120,7 @@ Compute the average velocity between $t = 5$ and $t = 8$.
 	\begin{mtasklist}
 		\item Graph this parabola and its slope.
 		\item Find the time in the air and the maximum height.
-		\item \label{ct} Prove: Half of the time you are above $y = \frac{3}{4}$. 
+		\item \label{ct} Prove: Half of the time you are above $y = \frac{3}{4}$.
 			\mibgreen{tip 1}\mibgreen{solution 1}
 
 			\mibblue{Basketball players hang in the air partly because of \ref{ct}.}
@@ -102,27 +129,55 @@ Compute the average velocity between $t = 5$ and $t = 8$.
 		its position and speed and upward velocity. \mibred{recommended}
 \end{mtasklist}
 
-\begin{mexerciselist}
+\begin{msectionlist}
 	\item When you jump and fall back your height is $y = 2t - t^2$ in the right
 		units.
-	\begin{mexerciselist}
+	\begin{msectionlist}
 		\item Graph this parabola and its slope.
-	\begin{mexerciselist}
+	\begin{msectionlist}
 		\item Graph this parabola and its slope.
-		\end{mexerciselist}
+		\end{msectionlist}
 		\item Find the time in the air and the maximum height.
-		\item \label{c} Prove: Half of the time you are above $y = \frac{3}{4}$. 
+		\item \label{c} Prove: Half of the time you are above $y = \frac{3}{4}$.
 			\mibgreen{tip 1}\mibgreen{solution 1}
 
 			\mibblue{Basketball players hang in the air partly because of \ref{c}.}
-		\end{mexerciselist}
+		\end{msectionlist}
 	\item If the ball on the unit circle reaches $t$ degrees at the time $t$, find
 		its position and speed and upward velocity. \mibred{recommended}
-\end{mexerciselist}
+\end{msectionlist}
+
+\noindent A plain enumeration with the msheet labels:
+\begin{menumerate}
+	\item first
+	\item second
+	\begin{menumerate}
+		\item nested
+	\end{menumerate}
+\end{menumerate}
+
+\noindent Section-numbered enumeration (\texttt{menumeratex}):
+\begin{menumeratex}
+	\item first
+	\item second
+	\begin{menumeratex}
+		\item nested
+	\end{menumeratex}
+\end{menumeratex}
+
+\noindent And the ticked list:
+\begin{mdone}(2)
+	* Hausaufgabe abgegeben
+	* Heft nachgeführt
+\end{mdone}
+
+\mibnp{}
+
+\subsection{Boxes}
 
 \begin{mtbred}[Theorem 1 -- l'H\^opitals rule]
 	Suppose $f(x)$ and $g(x)$ both approach zero as $x \to a$. Then
-	$\frac{f(x)}{g(x)}$ approaches the same limit as 
+	$\frac{f(x)}{g(x)}$ approaches the same limit as
 	$\frac{f^\prime(x)}{g^\prime(x)}$, if that second limit exists:
 	$$\lim_{x \to a}\frac{f(x)}{g(x)} = \lim_{x \to
 	a}\frac{f^\prime(x)}{g^\prime(x)}.$$
@@ -131,8 +186,6 @@ Compute the average velocity between $t = 5$ and $t = 8$.
 \begin{mtbgreen}[Experiment -- The gravitational force]
 	\lipsum[1]
 \end{mtbgreen}
-
-\mibnp{}
 
 \begin{mtbblue}[Example]
 	\lipsum[1]
@@ -146,5 +199,53 @@ Compute the average velocity between $t = 5$ and $t = 8$.
 	\lipsum[1]
 \end{mbinfo}
 
-\end{document}
+\begin{mbred}
+	An untitled red box.
+\end{mbred}
 
+\begin{mbgreen}
+	An untitled green box.
+\end{mbgreen}
+
+\begin{mbblue}
+	An untitled blue box.
+\end{mbblue}
+
+\begin{mbcolor}[Gold]
+	An untitled box in an arbitrary \texttt{svgnames} colour.
+\end{mbcolor}
+
+\subsection{Inline boxes}
+
+The inline boxes are meant for hints and markers inside running text:
+\mibred{Achtung}, \mibgreen{Tipp}, \mibblue{Beispiel} and
+\mibcolor[Gold]{beliebige Farbe}. \commandToText{\mibnp} puts a
+\enquote{Bitte wenden!} marker at the foot of the page and breaks it.
+
+\subsection{Scores}
+
+\commandToText{\mscore} puts the score of an exercise into the margin and adds
+it to a running total; \commandToText{\mtotalscore} prints that total.
+\commandToText{\mresetscore} starts a new count.
+
+\msection[Scored exercise]
+Compute $\int_0^1 x^2\,\mathrm{d}x$. \mscore{4}
+
+\msection[Another scored exercise]
+Compute $\int_0^1 x^3\,\mathrm{d}x$. \mscore{2.5}
+
+\mtotalscore
+
+\medskip
+\noindent \commandToText{\mresetscore} starts a new count, for a sheet with
+several independently scored parts.
+\mresetscore
+
+\msection[A third exercise, counted separately]
+Compute $\int_0^1 x^4\,\mathrm{d}x$. \mscore{3}
+
+\mtotalscore
+
+\mwish
+
+\end{document}

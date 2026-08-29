@@ -1,0 +1,99 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesClass{mexam}[2023/06/25 Class for writing oral exam sheets.]
+
+\DeclareRobustCommand\logo[1]{\gdef\@logo{#1}}
+\newcommand{\@logo}{Rolf-Benz-Schule.png}
+
+\DeclareRobustCommand\tasknumber[1]{\gdef\@tasknumber{#1}}
+\newcommand{\@tasknumber}{\@latex@warning@no@line{No \noexpand\tasknumber given}}
+
+\DeclareOption{twoside}{\OptionNotUsed}
+
+\DeclareOption{singlespacing}{\PassOptionsToPackage{\CurrentOption}{setspace}}
+\DeclareOption{onehalfspacing}{\PassOptionsToPackage{\CurrentOption}{setspace}}
+\DeclareOption{doublespacing}{\PassOptionsToPackage{\CurrentOption}{setspace}}
+
+\PassOptionsToPackage{many}{tcolorbox}
+\PassOptionsToPackage{svgnames}{xcolor}
+
+\DeclareOption*{\PassOptionsToClass{\CurrentOption}{scrartcl}}
+\ProcessOptions\relax
+\LoadClass{scrartcl}
+
+\RequirePackage{etoolbox}
+\RequirePackage{totcount}
+
+\RequirePackage{geometry}
+\RequirePackage[footsepline]{scrlayer-scrpage}
+
+\RequirePackage[bitstream-charter]{mathdesign}
+\RequirePackage[T1]{fontenc}
+\RequirePackage{microtype}
+\RequirePackage[ngerman]{babel}
+
+\RequirePackage{setspace}
+
+\RequirePackage{graphicx}
+\RequirePackage{tcolorbox}
+
+\RequirePackage{xcolor}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                          PAGE LAYOUT 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\geometry{left=15mm, right=15mm, top=25mm}
+\setlength{\headheight}{24pt}
+
+%Head and foot
+\pagestyle{scrheadings}
+\setkomafont{pageheadfoot}{\sffamily\mdseries\scriptsize}
+
+%\ihead{\@author}
+\ihead{}
+\chead{}
+\ohead{\smash{\includegraphics[width=153pt]{\@logo}}}
+
+\ifoot{}
+\regtotcounter{page}
+\cfoot{\ifnumcomp{\totvalue{page}}{>}{1}{\textbf{\thepage}}{}}
+
+\AddToLayerPageStyleOptions{scrheadings}
+{oninit={%
+		\ifnumcomp{\the\c@page}{>}{1}{\KOMAoptions{headsepline=true}}{\KOMAoptions{headsepline=false}}
+}}
+\ofoot{}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                          TITLE 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\tcbset{mytitle/.style=
+	{%
+		colback=white ,
+		boxrule=0.8pt , 
+		sharp corners
+	}%
+}%
+
+%\renewcommand{\maketitle}{%
+%	{
+%		\vspace*{-52pt}
+%		\fontsize{16}{19}\fontfamily{phv}\fontseries{b}\selectfont 		
+%		\begin{tcolorbox}[mytitle]
+%			\centering
+%			\@title
+%		\end{tcolorbox}
+%	}
+%  \medskip
+%}
+
+\renewcommand{\maketitle}{%
+	{
+		\vspace*{-52pt}
+		\fontsize{16}{19}\fontfamily{phv}\fontseries{b}\selectfont 		
+		\begin{tcolorbox}[mytitle]
+			\centering
+			\@title
+		\end{tcolorbox}
+	}
+  \medskip
+}

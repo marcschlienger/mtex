@@ -1,0 +1,44 @@
+%% mexam-example.tex -- example for the mexam class.
+%%
+%% Build with latexmk (two runs; see doc/NOTES.md).
+%% Class option "tabletitle" swaps the boxed title for the two-by-two cover
+%% table built from \exam / \title / \author / \date.
+\documentclass[onehalfspacing, 11pt, a4paper]{mexam}
+
+\usepackage{mstuff}
+\usepackage{msheet}
+
+\title{Mündliche Prüfung -- Analysis}
+\author{Marc Schlienger}
+\date{\today}
+
+\exam{Abiturprüfung 2026}      % shown by the "tabletitle" option
+\tasknumber{3}                 % shown in the head
+
+\license{\href{https://creativecommons.org/licenses/by/4.0}{CC BY 4.0}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+\maketitle
+
+\msection[Ableitung und Monotonie]
+Gegeben ist die Funktion $f$ mit $f(x) = \frac{1}{3}x^3 - x$.
+\begin{msectionlist}
+	\item Bestimmen Sie die Nullstellen von $f$. \mscore{3}
+	\item Untersuchen Sie $f$ auf Extremstellen. \mscore{4}
+	\item Skizzieren Sie den Graphen von $f$ im Intervall $[-3, 3]$. \mscore{3}
+\end{msectionlist}
+
+\begin{mbinfo}
+	Erwartungshorizont: Der Prüfling erkennt $f'(x) = x^2 - 1$ und begründet
+	das Monotonieverhalten über das Vorzeichen von $f'$.
+\end{mbinfo}
+
+\msectionr[Impuls für das Prüfungsgespräch]
+Wie ändert sich das Schaubild, wenn man $f$ durch $f(x) + c$ ersetzt?
+\mscore{2}
+
+\mtotalscore
+
+\end{document}

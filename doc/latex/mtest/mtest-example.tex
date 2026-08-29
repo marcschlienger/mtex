@@ -1,0 +1,59 @@
+%% mtest-example.tex -- example for the mtest class.
+%%
+%% Build with latexmk (two runs; see doc/NOTES.md).
+\documentclass[onehalfspacing, 11pt, a4paper]{mtest}
+
+\usepackage{mstuff}
+\usepackage{msheet}
+
+\title{Quadratische Funktionen}
+\author{Marc Schlienger}
+\date{\today}
+
+%% \class appears in the head, \testnumber in the title table.
+\class{Klasse 9b}
+\testnumber{2}
+
+%% Optional; both show up in the footer.
+\license{\href{https://creativecommons.org/licenses/by/4.0}{CC BY 4.0}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+\maketitle
+
+\mtestpart{Teil A -- ohne Hilfsmittel}
+
+\msection[Scheitelpunktform]
+Bringen Sie die folgenden Terme auf Scheitelpunktform. \mscore{6}
+\begin{mexccolumns}(2)
+	\exc $x^2 + 4x + 1$
+	\exc $x^2 - 6x + 11$
+\end{mexccolumns}
+
+\msection[Nullstellen]
+Bestimmen Sie die Nullstellen von $f(x) = x^2 - 5x + 6$. \mscore{4}
+
+\msectionr[Zuordnung]
+Ordnen Sie jedem Schaubild den passenden Term zu. \mscore{3}
+
+\mtestpart{Teil B -- mit Hilfsmitteln}
+
+\msection[Sachaufgabe]
+Ein Ball wird senkrecht nach oben geworfen. Seine Höhe in Metern nach
+$t$~Sekunden ist $h(t) = -5t^2 + 20t + 1$.
+\begin{msectionlist}[start=4]
+	\item Wann erreicht der Ball die maximale Höhe? \mscore{3}
+	\item Wie hoch fliegt er? \mscore{2}
+	\item Wann trifft er auf dem Boden auf? \mscore{3}
+\end{msectionlist}
+
+\begin{mbinfo}
+	Runden Sie alle Ergebnisse auf zwei Nachkommastellen.
+\end{mbinfo}
+
+\mtotalscore
+
+\mwish
+
+\end{document}

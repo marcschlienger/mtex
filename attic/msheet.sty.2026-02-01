@@ -1,32 +1,18 @@
-%% msheet.sty -- package for writing lesson sheets.
-%%
-%% Copyright (C) 2023--2026 Marc Schlienger <marc.schlienger@posteo.de>
-%% Released under the LaTeX Project Public License v1.3c or later, see
-%% http://www.latex-project.org/lppl.txt
-%%
-%% Merged 2026-08-29 from the two diverged copies:
-%%   texmf/tex/latex/msheet/msheet.sty  (2026-02-01, the newer API)
-%%   latex/msheet.sty                   (2026-01-27, still had \mdone)
-%% See attic/ for the originals.
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{msheet}[2026/08/29 v2.0 Package for writing lesson sheets.]
+\ProvidesPackage{msheet}[2023/05/30 Package for writing lesson sheets.]
 
 \PassOptionsToPackage{many}{tcolorbox}
 \PassOptionsToPackage{svgnames, table}{xcolor}
 
-\DeclareOption*{\PackageWarning{msheet}{Unknown option '\CurrentOption'}}
+\DeclareOption*{\PackageWarning{msheet}{Unknown ‘\CurrentOption’}}
 \ProcessOptions\relax
 
 \RequirePackage{enumitem}
-\RequirePackage{marginnote}
 \RequirePackage{etoolbox}
-\RequirePackage{fontawesome5}
+\RequirePackage{fontawesome}
 \RequirePackage{tasks}
-\RequirePackage{tikz}
 \RequirePackage{tcolorbox}
 \RequirePackage{xcolor}
-
-\definecolor{rbsblue}{HTML}{009BD4}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Command definitions
@@ -34,6 +20,7 @@
 \NewDocumentCommand{\mchapter}{m}{%
 	{%
 		\fontsize{20}{25}\fontfamily{phv}\fontseries{b}\selectfont
+		\definecolor{rbsblue}{HTML}{009BD4}
 		\setlength{\parindent}{0ex}
 		\vskip 2.3ex
 		{\hfill\textcolor{rbsblue}{#1}\hfill}
@@ -44,6 +31,7 @@
 \NewDocumentCommand{\mtestpart}{m}{%
 	{%
 		\fontsize{16}{20}\fontfamily{phv}\fontseries{b}\selectfont
+		\definecolor{rbsblue}{HTML}{009BD4}
 		\setlength{\parindent}{0ex}
 		\vskip 2.3ex
 		{\hfill\textcolor{rbsblue}{#1}\hfill}
@@ -51,7 +39,6 @@
 	}
 }%
 
-%% \msection -- an exercise heading that behaves like a subsection.
 \newcounter{msection}
 \NewDocumentCommand{\msection}{sO{}}{%
 	\IfBooleanTF#1%
@@ -69,7 +56,6 @@
 	}%
 }%
 
-%% \msectionr -- the same, but "run in": no vertical skip after the heading.
 \NewDocumentCommand{\msectionr}{sO{}}{%
 	\IfBooleanTF#1%
 	{%
@@ -84,39 +70,37 @@
 	}%
 }%
 
-%% Deprecated spellings, kept so that older documents keep compiling.
-\NewDocumentCommand{\msexercise}{sO{}}{%
-	\IfBooleanTF#1{\msection*[#2]}{\msection[#2]}%
-}%
-\NewDocumentCommand{\mpexercise}{sO{}}{%
-	\IfBooleanTF#1{\msectionr*[#2]}{\msectionr[#2]}%
-}%
+%\newcounter{mscore}
+%\NewDocumentCommand{\mscore}{m}{%
+%	{\mbox{}\marginpar{\bfseries #1~BE}}%
+%	\addtocounter{mscore}{#1}%
+%}
+%
+%\makeatletter
+%\newcommand*{\textoverline}[1]{$\overline{\hbox{#1}}\m@th$}
+%\makeatother
+%\NewDocumentCommand{\mtotalscore}{}{%
+%	\vskip 2.6ex%
+%	{\mbox{}\marginpar{\bfseries \textoverline{\themscore~BE}}}%
+%}%
 
-%% Scores ("Bewertungseinheiten").  \mscore puts the score of the current
-%% exercise into the margin and adds it to a running total, \mtotalscore
-%% prints the total (underlined).  The count is kept in a dimen so that
-%% half points work; the assignment is global so that \mscore also works
-%% inside boxes, lists and environments.
-%%
-%% NB: this block deliberately has no catcode juggling around it.  Inside a
-%% .sty file "@" is already a letter; the "make at other" that used to close
-%% this block turned "@" into an ordinary character for the *rest of the
-%% file*, which silently broke every \p@enumi... in menumeratex below.
 \newlength\mscorecnt
+%\setlength\mscorecnt{0pt}
+
+\makeatletter
 
 \newcommand{\mscore}[1]{%
-	\marginnote{\bfseries #1~BE}%
-	\global\advance\mscorecnt#1\p@
+	{\mbox{}\marginpar{\bfseries #1~BE}}%
+	\advance\mscorecnt#1\p@
 }%
-
-\newcommand{\mresetscore}{\global\mscorecnt\z@}%
 
 \newcommand*{\textoverline}[1]{$\overline{\hbox{#1}}\m@th$}
 \newcommand{\mtotalscore}{%
 	\vskip 2.6ex%
-	\marginnote{\bfseries
-		\textoverline{\fpeval{\strip@pt\mscorecnt}~BE}}%
+	{\mbox{}\marginpar{\bfseries \textoverline{\strip@pt\mscorecnt~BE}}}%
 }%
+
+\makeatother
 
 \NewDocumentCommand{\mwish}{}{%
 	{%
@@ -197,8 +181,14 @@
 		\renewcommand*{\labelenumii}{(\theenumii)}
 		\renewcommand*{\labelenumiii}{\theenumiii.}
 		\renewcommand*{\labelenumiv}{\theenumiv}
+		%\setlength{\leftmargini}{2.0em}
+		%\setlength{\leftmarginii}{1.76em}
+		%\setlength{\leftmarginiii}{1.50em}
+		%\setlength{\leftmarginiv}{1.28em}
 	}%
 {\end{enumerate}}%
+%\setlist*[enumerate, 1]{wide=0pt, labelwidth=0.5cm, leftmargin=!}
+%\setlist*[enumerate, 2]{align=left, labelwidth=0.5cm, leftmargin=0cm}%
 
 \newenvironment{menumeratex}%
 	{\begin{enumerate}%
@@ -328,39 +318,32 @@
 	leftmargin=0cm,
 }%
 
-\newlist{msectionlist}{enumerate}{4}
-\setlist*[msectionlist, 1]{%
+\newlist{msectioniselist}{enumerate}{4}
+\setlist*[msectioniselist, 1]{%
 	label=\textbf{Aufgabe~\arabic*},
 	wide=0pt,
 	labelwidth=0.5cm,
 	labelsep=0.35cm,
 	leftmargin=!,
 }%
-\setlist*[msectionlist, 2]{%
-	label=\textbf{\alph*)},
-	align=left,
+\setlist*[msectioniselist, 2]{%
+	label=\textbf{\alph*},
+  align=left,
 	labelwidth=0.5cm,
 	leftmargin=0cm,
 }%
-\setlist*[msectionlist, 3]{%
+\setlist*[msectioniselist, 3]{%
 	label=\textbf{\roman*.},
 	align=left,
 	labelwidth=0.5cm,
 	leftmargin=0cm,
 }%
-\setlist*[msectionlist, 4]{%
+\setlist*[msectioniselist, 4]{%
 	label=\textbf{\Alph*.},
 	align=left,
 	labelwidth=0.5cm,
 	leftmargin=0cm,
 }%
-
-%% Deprecated spellings of msectionlist, kept for older documents.
-%% (msectioniselist was the result of a botched search-and-replace.)
-\newenvironment{mexerciselist}%
-	{\begin{msectionlist}}{\end{msectionlist}}%
-\newenvironment{msectioniselist}%
-	{\begin{msectionlist}}{\end{msectionlist}}%
 
 %%% list definitions on top of the tasks package
 \NewTasksEnvironment[%
@@ -376,10 +359,3 @@
 	label-width=2em,
 	label-offset=0pt,
 ]{mtaskcolumns}[\task]
-
-\NewTasksEnvironment[%
-	label=\faThumbsUp[regular],
-	item-indent=2em,
-	label-width=2em,
-	label-offset=-2pt
-]{mdone}[*]

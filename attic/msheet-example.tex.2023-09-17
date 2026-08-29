@@ -1,0 +1,58 @@
+\documentclass[worksheet, yellow, 11pt, a4paper, DIV=calc]{msheet}
+
+\usepackage{mstuff}
+\usepackage{msheet}
+\usepackage[language=ngerman]{lipsum}
+
+%%%
+\begin{document}
+
+\title{An example showcasing the use of the sheets package}
+\author{Marc Schlienger}
+\maketitle
+
+\license{\href{https://creativecommons.org/licenses/by/4.0}{CC BY 4.0}}
+%\attribution{Modifizierte Version von \glqq{}\href{https://henriks-mathewerkstatt.de/2_13_Funktionen_zu_Kurven_mit_gegebenen_Eigenschaften.html}{Funktionen zu Kurven mit \ldots}\grqq{} von Henrik Horstmann.} 
+
+\begin{question}
+	\item 1. \mscolorbox[orange]{Tipp 2}	
+	\begin{question}
+		\item 1.1.
+		\begin{question}
+			\item 1.1.1. 
+			\item 1.1.2. 
+			\begin{question}
+				\item 1.1.2.1. \msgreenbox{Tipp 2}
+				\item 1.1.2.2. \msredbox{Tipp 2}
+			\end{question}
+		\end{question}
+	\end{question}
+	\item 2. 
+	\item 3. \msbluebox{Tipp 2}
+\end{question}
+
+Etwas Mathematik: \ldots
+$$ \int_a^b{f(x)\;dx} $$
+
+\problem*[(Zusatztext)]
+\lipsum[1]
+
+\problem[(Zusatztext)]
+\lipsum[1]
+
+\pproblem*
+\lipsum[1]
+
+\pproblem
+\lipsum[1]
+
+\begin{msexamplebox}
+	Ein Test-Beispiel.
+\end{msexamplebox}
+
+\begin{msexperimentbox}
+	Ein Test-Beispiel.
+\end{msexperimentbox}
+
+\end{document}
+
