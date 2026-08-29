@@ -1,7 +1,6 @@
 %% msheet-example.tex -- example for the msheet class and package.
 %%
-%% This file replaces the 2023 example, which still used the long-gone
-%% "question"/"problem"/"msbluebox" API; that file is kept in attic/.
+%% Build with latexmk (two runs are required, see doc/NOTES.md).
 \documentclass[factsheet, white, rounded, onehalfspacing, 11pt, a4paper]{msheet}
 
 \usepackage{mstuff}
@@ -14,8 +13,7 @@
 \attribution{Aufgaben nach \href{https://math.mit.edu/~gs/}{Gilbert Strang}.}
 \license{\href{https://creativecommons.org/licenses/by/4.0}{CC BY 4.0}}
 
-%% Everything above can also be said through the key/value interface, which
-%% additionally replaces the old public \icon and \titlebackcolor commands:
+%% Everything above can also be said through the key/value interface:
 %\msheetsetup{type=experiment, titlecolor=DarkCyan, logo=Rolf-Benz-Schule.png}
 
 \newcommand{\commandToText}[1]{\texttt{\string#1}}
@@ -35,27 +33,19 @@ This document is of type \textit{\color{FireBrick}factsheet}.
 
 We can force a rounded title box using the option
 \textit{\color{FireBrick}rounded}. The background color of the title box might
-be chosen as well. Available options are \textit{\color{DarkCyan}cyan},
+be chosen as well: \textit{\color{DarkCyan}cyan},
 \textit{\color{LightSlateGray}grey},
 \colorbox{LightSlateGray}{\textit{\color{white}white}} and
 \textit{\color{Yellow}yellow}.
 
-The line spacing can be set via the options
-\textit{\color{FireBrick}singlespacing},
-\textit{\color{FireBrick}onehalfspacing} (this is the setting in this document)
-and \textit{\color{FireBrick}doublespacing}.
+The line spacing is set with \textit{\color{FireBrick}singlespacing},
+\textit{\color{FireBrick}onehalfspacing} (used here) and
+\textit{\color{FireBrick}doublespacing}.
 
-All of these can also be set with \commandToText{\msheetsetup}, which works
-in the preamble and in the document body:
-\textit{\color{FireBrick}\commandToText{\msheetsetup\{type=experiment,
-titlecolor=DarkCyan\}}}. The old public \commandToText{\icon} and
-\commandToText{\titlebackcolor} commands no longer exist.
-
-A license and an attribution might be given via
-\textit{\color{FireBrick}\commandToText{\license\{\}}} and
-\textit{\color{FireBrick}\commandToText{\attribution\{\}}} respectively (see
-footer). Both are optional; if they are omitted, the corresponding part of the
-footer is simply left out and a single warning is issued.
+All of these can also be set with \commandToText{\msheetsetup}, which works in
+the preamble and in the document body. A license and an attribution are given
+with \commandToText{\license} and \commandToText{\attribution} (see the
+footer); both are optional.
 
 \section{The msheet style (msheet.sty)}
 
@@ -71,178 +61,95 @@ coloured headings:
 
 \msection[\color{FireBrick} A subsection like task environment.]
 Compute the average velocity between $t = 5$ and $t = 8$.
-\begin{mtaskcolumns}(3)
-	\task $f(t) = 6t$
-	\task $f(t) = 6t+2$
-	\task $f(t) = \frac{1}{2}at^2$
-	\task $f(t) = t-t^2$
-	\task $f(t) = 6$
-\end{mtaskcolumns}
+\begin{mexccolumns}(3)
+	\exc $f(t) = 6t$
+	\exc $f(t) = 6t+2$
+	\exc $f(t) = \frac{1}{2}at^2$
+	\exc $f(t) = t-t^2$
+	\exc $f(t) = 6$
+\end{mexccolumns}
 
-\msection*[\color{FireBrick} And the same as starred version.]
+\msection*[\color{FireBrick} And the same as starred version, without a number.]
 Compute the average velocity between $t = 5$ and $t = 8$.
-\begin{mexccolumns}(3)
-	\exc $f(t) = 6t$ \exc $f(t) = 6t+2$
-	\exc $f(t) = \frac{1}{2}at^2$
-	\exc $f(t) = t-t^2$
-	\exc $f(t) = 6$
-\end{mexccolumns}
 
-\msectionr[\color{DodgerBlue} A paragraph like task environment.]
-\begin{mexccolumns}(3)
-	\exc $f(t) = 6t$ \exc $f(t) = 6t+2$
-	\exc $f(t) = \frac{1}{2}at^2$
-	\exc $f(t) = t-t^2$
-	\exc $f(t) = 6$
-\end{mexccolumns}
-
-\msectionr*[\color{DodgerBlue} And the same as starred version.]
-\begin{mtaskcolumns}(3)
-	\task $f(t) = 6t$
-	\task $f(t) = 6t+2$
-	\task $f(t) = \frac{1}{2}at^2$
-	\task $f(t) = t-t^2$
-	\task $f(t) = 6$
-\end{mtaskcolumns}
-
-\medskip
-\noindent The old names \commandToText{\msexercise} and
-\commandToText{\mpexercise} still work; they are aliases of
-\commandToText{\msection} and \commandToText{\msectionr}.
-
-\mibnp{}
+\msectionr[\color{DodgerBlue} A run-in heading: the text continues here.]
+The body follows on the same line as the heading.
 
 \subsection{Lists}
 
-\begin{mtasklist}
-	\item When you jump and fall back your height is $y = 2t - t^2$ in the right
-		units.
-	\begin{mtasklist}
-		\item Graph this parabola and its slope.
-		\item Find the time in the air and the maximum height.
-		\item \label{ct} Prove: Half of the time you are above $y = \frac{3}{4}$.
-			\mibgreen{tip 1}\mibgreen{solution 1}
-
-			\mibblue{Basketball players hang in the air partly because of \ref{ct}.}
-		\end{mtasklist}
-	\item If the ball on the unit circle reaches $t$ degrees at the time $t$, find
-		its position and speed and upward velocity. \mibred{recommended}
-\end{mtasklist}
-
-\begin{msectionlist}
-	\item When you jump and fall back your height is $y = 2t - t^2$ in the right
-		units.
-	\begin{msectionlist}
-		\item Graph this parabola and its slope.
-	\begin{msectionlist}
-		\item Graph this parabola and its slope.
-		\end{msectionlist}
-		\item Find the time in the air and the maximum height.
-		\item \label{c} Prove: Half of the time you are above $y = \frac{3}{4}$.
-			\mibgreen{tip 1}\mibgreen{solution 1}
-
-			\mibblue{Basketball players hang in the air partly because of \ref{c}.}
-		\end{msectionlist}
-	\item If the ball on the unit circle reaches $t$ degrees at the time $t$, find
-		its position and speed and upward velocity. \mibred{recommended}
-\end{msectionlist}
-
-\noindent A plain enumeration with the msheet labels:
 \begin{menumerate}
 	\item first
 	\item second
 	\begin{menumerate}
-		\item nested
+		\item nested, numbered $(1)$
+		\item and a second one
 	\end{menumerate}
+	\item third
 \end{menumerate}
-
-\noindent Section-numbered enumeration (\texttt{menumeratex}):
-\begin{menumeratex}
-	\item first
-	\item second
-	\begin{menumeratex}
-		\item nested
-	\end{menumeratex}
-\end{menumeratex}
-
-\noindent And the ticked list:
-\begin{mdone}(2)
-	* Hausaufgabe abgegeben
-	* Heft nachgeführt
-\end{mdone}
 
 \mibnp{}
 
+\subsection{Inline markers}
+
+Hints in the running text use \commandToText{\mtag}, with
+\commandToText{\mtip} and \commandToText{\msolution} as the two shorthands:
+\mtip[1] \msolution[1] \mtag[FireBrick]{beliebige Farbe}.
+\commandToText{\mibnp} puts a \enquote{Bitte wenden!} marker at the foot of the
+page and breaks it.
+
 \subsection{Boxes}
 
-\begin{mtbred}[Theorem 1 -- l'H\^opitals rule]
+Each box is named after what goes in it; the starred form drops the title, and
+the optional argument replaces the default one.
+
+\begin{mrule}[Satz 1 -- l'H\^opitals rule]
 	Suppose $f(x)$ and $g(x)$ both approach zero as $x \to a$. Then
 	$\frac{f(x)}{g(x)}$ approaches the same limit as
 	$\frac{f^\prime(x)}{g^\prime(x)}$, if that second limit exists:
 	$$\lim_{x \to a}\frac{f(x)}{g(x)} = \lim_{x \to
 	a}\frac{f^\prime(x)}{g^\prime(x)}.$$
-\end{mtbred}
+\end{mrule}
 
-\begin{mtbgreen}[Experiment -- The gravitational force]
+\begin{mrule*}
+	The starred form, for a statement that needs no heading.
+\end{mrule*}
+
+\begin{mexperiment}[Versuch 1 -- The gravitational force]
 	\lipsum[1]
-\end{mtbgreen}
+\end{mexperiment}
 
-\begin{mtbblue}[Example]
-	\lipsum[1]
-\end{mtbblue}
+\begin{mexample}[Definition]
+	The default title of \texttt{mexample} is \enquote{Beispiel}; here it has
+	been replaced.
+\end{mexample}
 
-\begin{mtbcolor}[Gold]{A golden titled box}
-	\lipsum[1]
-\end{mtbcolor}
+\begin{minfo}
+	The default title of \texttt{minfo} is \enquote{Information}.
+\end{minfo}
 
-\begin{mbinfo}
-	\lipsum[1]
-\end{mbinfo}
+\begin{minfo*}
+	And without a title.
+\end{minfo*}
 
-\begin{mbred}
-	An untitled red box.
-\end{mbred}
+\begin{mframe}[Gold]{A free title in an arbitrary colour}
+	\lipsum[2]
+\end{mframe}
 
-\begin{mbgreen}
-	An untitled green box.
-\end{mbgreen}
-
-\begin{mbblue}
-	An untitled blue box.
-\end{mbblue}
-
-\begin{mbcolor}[Gold]
-	An untitled box in an arbitrary \texttt{svgnames} colour.
-\end{mbcolor}
-
-\subsection{Inline boxes}
-
-The inline boxes are meant for hints and markers inside running text:
-\mibred{Achtung}, \mibgreen{Tipp}, \mibblue{Beispiel} and
-\mibcolor[Gold]{beliebige Farbe}. \commandToText{\mibnp} puts a
-\enquote{Bitte wenden!} marker at the foot of the page and breaks it.
+\begin{mframe*}
+	A neutral frame with no title at all --- the workhorse box.
+\end{mframe*}
 
 \subsection{Scores}
 
 \commandToText{\mscore} puts the score of an exercise into the margin and adds
-it to a running total; \commandToText{\mtotalscore} prints that total.
+it to a running total; \commandToText{\mtotalscore} prints that total, and
 \commandToText{\mresetscore} starts a new count.
 
 \msection[Scored exercise]
-Compute $\int_0^1 x^2\,\mathrm{d}x$. \mscore{4}
+Compute $\int_0^1 x^2 \,\dd x$. \mscore{4}
 
 \msection[Another scored exercise]
-Compute $\int_0^1 x^3\,\mathrm{d}x$. \mscore{2.5}
-
-\mtotalscore
-
-\medskip
-\noindent \commandToText{\mresetscore} starts a new count, for a sheet with
-several independently scored parts.
-\mresetscore
-
-\msection[A third exercise, counted separately]
-Compute $\int_0^1 x^4\,\mathrm{d}x$. \mscore{3}
+Compute $\int_0^1 x^3 \,\dd x$. \mscore{2.5}
 
 \mtotalscore
 

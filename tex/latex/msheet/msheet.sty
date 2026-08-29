@@ -1,15 +1,14 @@
-%% msheet.sty -- package for writing lesson sheets.
+%% msheet.sty -- exercise headings, boxes, lists and scores.
 %%
 %% Copyright (C) 2023--2026 Marc Schlienger <marc.schlienger@posteo.de>
 %% Released under the LaTeX Project Public License v1.3c or later, see
 %% http://www.latex-project.org/lppl.txt
 %%
-%% Merged 2026-08-29 from the two diverged copies:
-%%   texmf/tex/latex/msheet/msheet.sty  (2026-02-01, the newer API)
-%%   latex/msheet.sty                   (2026-01-27, still had \mdone)
-%% See attic/ for the originals.
+%% v2.2 names the boxes after what they are for rather than after their
+%% colour, and drops the environments that were never used.  See
+%% doc/NOTES.md for the migration.
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{msheet}[2026/08/29 v2.0 Package for writing lesson sheets.]
+\ProvidesPackage{msheet}[2026/08/29 v2.2 Exercise headings, boxes, lists and scores.]
 
 \PassOptionsToPackage{many}{tcolorbox}
 \PassOptionsToPackage{svgnames, table}{xcolor}
@@ -26,10 +25,23 @@
 \RequirePackage{tcolorbox}
 \RequirePackage{xcolor}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Palette
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% One place to restyle everything.  The boxes below refer to these names
+%% only, so "Merksätze should be blue from now on" is a one-line change.
 \definecolor{rbsblue}{HTML}{009BD4}
 
+\colorlet{msheet@rule}{FireBrick}        % Merksatz, Satz, Regel
+\colorlet{msheet@experiment}{LightGreen} % Versuch, Vorgehen
+\colorlet{msheet@example}{DodgerBlue}    % Beispiel, Definition
+\colorlet{msheet@info}{LightSeaGreen}    % Information, Hinweis
+\colorlet{msheet@frame}{Chocolate}       % free title, neutral frame
+\colorlet{msheet@tag}{LightGreen}        % inline Tipp / Lösung markers
+\colorlet{msheet@turn}{Cyan}             % "Bitte wenden!"
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Command definitions
+%% Headings
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \NewDocumentCommand{\mchapter}{m}{%
 	{%
@@ -52,6 +64,8 @@
 }%
 
 %% \msection -- an exercise heading that behaves like a subsection.
+%% \msectionr -- the same, run in: the text continues on the heading line.
+%% The starred forms omit the number.
 \newcounter{msection}
 \NewDocumentCommand{\msection}{sO{}}{%
 	\IfBooleanTF#1%
@@ -69,7 +83,6 @@
 	}%
 }%
 
-%% \msectionr -- the same, but "run in": no vertical skip after the heading.
 \NewDocumentCommand{\msectionr}{sO{}}{%
 	\IfBooleanTF#1%
 	{%
@@ -84,24 +97,25 @@
 	}%
 }%
 
-%% Deprecated spellings, kept so that older documents keep compiling.
-\NewDocumentCommand{\msexercise}{sO{}}{%
-	\IfBooleanTF#1{\msection*[#2]}{\msection[#2]}%
-}%
-\NewDocumentCommand{\mpexercise}{sO{}}{%
-	\IfBooleanTF#1{\msectionr*[#2]}{\msectionr[#2]}%
+\NewDocumentCommand{\mwish}{}{%
+	{%
+		\fontsize{20}{25}\fontfamily{phv}\fontseries{b}\selectfont
+		\setlength{\parindent}{0ex}
+		\vskip 4.6ex
+		{\hfill Viel Erfolg! \hfill}
+		\vskip 0.3ex
+	}
 }%
 
-%% Scores ("Bewertungseinheiten").  \mscore puts the score of the current
-%% exercise into the margin and adds it to a running total, \mtotalscore
-%% prints the total (underlined).  The count is kept in a dimen so that
-%% half points work; the assignment is global so that \mscore also works
-%% inside boxes, lists and environments.
-%%
-%% NB: this block deliberately has no catcode juggling around it.  Inside a
-%% .sty file "@" is already a letter; the "make at other" that used to close
-%% this block turned "@" into an ordinary character for the *rest of the
-%% file*, which silently broke every \p@enumi... in menumeratex below.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Scores
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% \mscore puts the score of the current exercise into the margin and adds
+%% it to a running total, \mtotalscore prints the total (underlined),
+%% \mresetscore starts a new count.  The count lives in a dimen so that half
+%% points work; the assignment is global so that \mscore also works inside
+%% boxes, lists and environments.  marginnote (rather than \marginpar) for
+%% the same reason -- note that it needs a second LaTeX run.
 \newlength\mscorecnt
 
 \newcommand{\mscore}[1]{%
@@ -118,33 +132,12 @@
 		\textoverline{\fpeval{\strip@pt\mscorecnt}~BE}}%
 }%
 
-\NewDocumentCommand{\mwish}{}{%
-	{%
-		\fontsize{20}{25}\fontfamily{phv}\fontseries{b}\selectfont
-		\setlength{\parindent}{0ex}
-		\vskip 4.6ex
-		{\hfill Viel Erfolg! \hfill}
-		\vskip 0.3ex
-	}
-}%
-
-%%% box definitions on top of tikz
-%% 'new page' box
-\newcommand{\mibnpsymbol}{\faAngleDoubleRight\faAngleDoubleRight}
-\newcommand{\mibnp}{%
-	\vfill\hfill
-	\tikz[baseline={(a.base)}]%
-		\node[%
-			draw=Cyan!60!black ,
-			rounded corners=0.5ex ,
-			fill=Cyan!6!white ,
-			inner sep=4pt
-			] (a) {\small{\sffamily\mibnpsymbol\;Bitte wenden!\;\mibnpsymbol}};
-	\newpage
-}%
-
-%% inline boxes
-\newcommand{\mibcolor}[2][Chocolate]{%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Inline markers
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% \mtag{...} is the inline pill used for hints in the running text;
+%% \mtip and \msolution are the two uses it actually has.
+\newcommand{\mtag}[2][msheet@tag]{%
 	\tikz[baseline={(a.base)}]%
 		\node[%
 			draw=#1!60!black ,
@@ -153,40 +146,132 @@
 			inner sep=2pt
 			] (a) {#2};
 }%
+\newcommand{\mtip}[1][]{\mtag{Tipp~#1}}%
+\newcommand{\msolution}[1][]{\mtag{L\"osung~#1}}%
 
-\newcommand{\mibred}[1]{%
+%% "Bitte wenden!" at the foot of the page, then a page break.
+\newcommand{\mturnsymbol}{\faAngleDoubleRight\faAngleDoubleRight}
+\newcommand{\mibnp}{%
+	\vfill\hfill
 	\tikz[baseline={(a.base)}]%
 		\node[%
-			draw=FireBrick!60!black ,
+			draw=msheet@turn!60!black ,
 			rounded corners=0.5ex ,
-			fill=FireBrick!6!white ,
-			inner sep=2pt
-			] (a) {#1};
-}%
-
-\newcommand{\mibgreen}[1]{%
-	\tikz[baseline={(a.base)}]%
-		\node[%
-			draw=LightGreen!60!black ,
-			rounded corners=0.5ex ,
-			fill=LightGreen!6!white ,
-			inner sep=2pt
-			] (a) {#1};
-}%
-
-\newcommand{\mibblue}[1]{%
-	\tikz[baseline={(a.base)}]%
-		\node[%
-			draw=DodgerBlue!60!black ,
-			rounded corners=0.5ex ,
-			fill=DodgerBlue!6!white ,
-			inner sep=2pt
-			] (a) {#1};
+			fill=msheet@turn!6!white ,
+			inner sep=4pt
+			] (a) {\small{\sffamily\mturnsymbol\;Bitte wenden!\;\mturnsymbol}};
+	\newpage
 }%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Environment definitions
+%% Boxes
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Named after what goes in them.  Each has a starred form without a title,
+%% as in amsthm.  The optional argument overrides the default title.
+%%
+%%   mrule       Merksatz, Satz, Regel
+%%   mexperiment Versuch, Vorgehen
+%%   mexample    Beispiel, Definition
+%%   minfo       Information, Hinweis
+%%   mframe      free title, neutral frame; [colour] to recolour
+%%
+%% NB: the starred (untitled) forms keep the exact colours and font
+%% settings of the boxes they replace, which are not always those of the
+%% titled form -- mframe* and minfo* deliberately do not set fontupper, so
+%% their body stays in the document font.
+\tcbset{
+	msheet@titled/.style={
+		size=fbox,
+		fonttitle=\large\sffamily\bfseries,
+		fontupper=\normalsize\sffamily\mdseries,
+	},
+	msheet@plain/.style={
+		size=fbox,
+		fontupper=\normalsize\sffamily\mdseries,
+	},
+}
+
+%% Merksatz, Satz, Regel
+\newtcolorbox{mrule}[1][Merksatz]{%
+	msheet@titled,
+	colback=Yellow!6!white,
+	colframe=msheet@rule!24!black,
+	colbacktitle=msheet@rule!70!white,
+	coltitle=msheet@rule!12!black,
+	title={#1}
+}%
+\newtcolorbox{mrule*}{%
+	msheet@plain,
+	colback=msheet@rule!12!white,
+	colframe=msheet@rule!48!black,
+}%
+
+%% Versuch, Vorgehen
+\newtcolorbox{mexperiment}[1][Versuch]{%
+	msheet@titled,
+	colback=Yellow!6!white,
+	colframe=msheet@experiment!24!black,
+	colbacktitle=msheet@experiment!80!white,
+	coltitle=msheet@experiment!12!black,
+	title={#1}
+}%
+\newtcolorbox{mexperiment*}{%
+	msheet@plain,
+	colback=msheet@experiment!24!white,
+	colframe=msheet@experiment!24!black,
+}%
+
+%% Beispiel, Definition
+\newtcolorbox{mexample}[1][Beispiel]{%
+	msheet@titled,
+	colback=Yellow!6!white,
+	colframe=msheet@example!24!black,
+	colbacktitle=msheet@example!50!white,
+	coltitle=msheet@example!12!black,
+	title={#1}
+}%
+\newtcolorbox{mexample*}{%
+	msheet@plain,
+	colback=Yellow!6!white,
+	colframe=msheet@example!24!black,
+}%
+
+%% Information, Hinweis.  The titled form is new; the starred one is the
+%% former mbinfo and keeps its document-font body.
+\newtcolorbox{minfo}[1][Information]{%
+	msheet@titled,
+	colback=msheet@info!12!white,
+	colframe=msheet@info!24!black,
+	colbacktitle=msheet@info!50!white,
+	coltitle=msheet@info!12!black,
+	title={#1}
+}%
+\newtcolorbox{minfo*}{%
+	size=fbox,
+	colback=msheet@info!12!white,
+	colframe=msheet@info!24!black,
+}%
+
+%% Free title, neutral frame; the optional argument recolours the box.
+\newtcolorbox{mframe}[2][msheet@frame]{%
+	msheet@titled,
+	colback=#1!6!white,
+	colframe=#1!24!black,
+	colbacktitle=#1!50!white,
+	coltitle=#1!12!black,
+	title={#2}
+}%
+\newtcolorbox{mframe*}[1][msheet@frame]{%
+	size=fbox,
+	colback=#1!6!white,
+	colframe=#1!24!black,
+}%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Lists
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% menumerate  -- the everyday enumeration: a), (1), A., I
+%% mexccolumns -- n columns of short sub-exercises, separated by \exc
 \newenvironment{menumerate}%
 	{\begin{enumerate}%
 		\renewcommand*{\theenumi}{\alph{enumi}}
@@ -200,186 +285,9 @@
 	}%
 {\end{enumerate}}%
 
-\newenvironment{menumeratex}%
-	{\begin{enumerate}%
-		\renewcommand*{\theenumi}{\thesection.\arabic{enumi}}
-		\renewcommand*{\theenumii}{\theenumi.\arabic{enumii}}
-		\renewcommand*{\theenumiii}{\theenumii.\arabic{enumiii}}
-		\renewcommand*{\theenumiv}{\theenumiii.\arabic{enumiv}}
-		\renewcommand*{\labelenumi}{\theenumi.}
-		\renewcommand*{\labelenumii}{\theenumii.}
-		\renewcommand*{\labelenumiii}{\theenumiii.}
-		\renewcommand*{\labelenumiv}{\theenumiv.}
-		\renewcommand*{\p@enumi}{}
-		\renewcommand*{\p@enumii}{}
-		\renewcommand*{\p@enumiii}{}
-		\renewcommand*{\p@enumiv}{}
-		\setlength{\leftmargini}{2.5em}
-		\setlength{\leftmarginii}{2.2em}
-		\setlength{\leftmarginiii}{1.87em}
-		\setlength{\leftmarginiv}{1.6em}
-	}%
-{\end{enumerate}}%
-
-%%% box definitions on top of tcolorbox
-%% boxes with title
-\newtcolorbox{mtbcolor}[2][Chocolate]{%
-	size=fbox,
-	fonttitle=\large\sffamily\bfseries,
-	fontupper=\normalsize\sffamily\mdseries,
-	colback=#1!6!white,
-	colframe=#1!24!black,
-	colbacktitle=#1!50!white,
-	coltitle=#1!12!black,
-	title={#2}
-}%
-
-\newtcolorbox{mtbred}[1][Merksatz]{%
-	size=fbox,
-	fonttitle=\large\sffamily\bfseries,
-	fontupper=\normalsize\sffamily\mdseries,
-	colback=Yellow!6!white,
-	colframe=FireBrick!24!black,
-	colbacktitle=FireBrick!70!white,
-	coltitle=FireBrick!12!black,
-	title={#1}
-}%
-
-\newtcolorbox{mtbgreen}[1][Versuch]{%
-	fonttitle=\large\sffamily\bfseries,
-	fontupper=\normalsize\sffamily\mdseries,
-	size=fbox,
-	colback=Yellow!6!white,
-	colframe=LightGreen!24!black,
-	colbacktitle=LightGreen!80!white,
-	coltitle=LightGreen!12!black,
-	title={#1}
-}%
-
-\newtcolorbox{mtbblue}[1][Beispiel]{%
-	size=fbox,
-	fonttitle=\large\sffamily\bfseries,
-	fontupper=\normalsize\sffamily\mdseries,
-	colback=Yellow!6!white,
-	colframe=DodgerBlue!24!black,
-	colbacktitle=DodgerBlue!50!white,
-	coltitle=DodgerBlue!12!black,
-	title={#1}
-}%
-
-%% boxes without title
-\newtcolorbox{mbcolor}[1][Chocolate]{%
-	size=fbox,
-	colback=#1!6!white,
-	colframe=#1!24!black,
-}%
-
-\newtcolorbox{mbred}{%
-	size=fbox,
-	fontupper=\normalsize\sffamily\mdseries,
-	colback=FireBrick!12!white,
-	colframe=FireBrick!48!black,
-}%
-
-\newtcolorbox{mbgreen}{%
-	size=fbox,
-	fontupper=\normalsize\sffamily\mdseries,
-	colback=LightGreen!24!white,
-	colframe=LightGreen!24!black,
-}%
-
-\newtcolorbox{mbblue}{%
-	size=fbox,
-	fontupper=\normalsize\sffamily\mdseries,
-	colback=Yellow!6!white,
-	colframe=DodgerBlue!24!black,
-}%
-
-\newtcolorbox{mbinfo}{%
-	size=fbox,
-	colback=LightSeaGreen!12!white,
-	colframe=LightSeaGreen!24!black,
-}%
-
-%%% list definitions on top of the enumitem package
-\newlist{mtasklist}{enumerate}{4}
-\setlist*[mtasklist, 1]{%
-	label*=\textbf{\arabic*.},
-	wide=0pt,
-	labelwidth=1.5cm,
-	leftmargin=!,
-}%
-\setlist*[mtasklist, 2]{
-	label*=\textbf{\arabic*.},
-	align=left,
-	labelwidth=1.5cm,
-	leftmargin=0cm,
-}%
-\setlist*[mtasklist, 3]{%
-	label*=\textbf{\arabic*.},
-	align=left,
-	labelwidth=1.5cm,
-	leftmargin=0cm,
-}%
-\setlist*[mtasklist, 4]{
-	label*=\textbf{\arabic*.},
-	align=left,
-	labelwidth=1.5cm,
-	leftmargin=0cm,
-}%
-
-\newlist{msectionlist}{enumerate}{4}
-\setlist*[msectionlist, 1]{%
-	label=\textbf{Aufgabe~\arabic*},
-	wide=0pt,
-	labelwidth=0.5cm,
-	labelsep=0.35cm,
-	leftmargin=!,
-}%
-\setlist*[msectionlist, 2]{%
-	label=\textbf{\alph*)},
-	align=left,
-	labelwidth=0.5cm,
-	leftmargin=0cm,
-}%
-\setlist*[msectionlist, 3]{%
-	label=\textbf{\roman*.},
-	align=left,
-	labelwidth=0.5cm,
-	leftmargin=0cm,
-}%
-\setlist*[msectionlist, 4]{%
-	label=\textbf{\Alph*.},
-	align=left,
-	labelwidth=0.5cm,
-	leftmargin=0cm,
-}%
-
-%% Deprecated spellings of msectionlist, kept for older documents.
-%% (msectioniselist was the result of a botched search-and-replace.)
-\newenvironment{mexerciselist}%
-	{\begin{msectionlist}}{\end{msectionlist}}%
-\newenvironment{msectioniselist}%
-	{\begin{msectionlist}}{\end{msectionlist}}%
-
-%%% list definitions on top of the tasks package
 \NewTasksEnvironment[%
 	label=\textbf{\alph*)},
 	item-indent=2em,
 	label-width=2em,
 	label-offset=0pt,
 	]{mexccolumns}[\exc]
-
-\NewTasksEnvironment[%
-	label=\textbf{\arabic*.},
-	item-indent=2em,
-	label-width=2em,
-	label-offset=0pt,
-]{mtaskcolumns}[\task]
-
-\NewTasksEnvironment[%
-	label=\faThumbsUp[regular],
-	item-indent=2em,
-	label-width=2em,
-	label-offset=-2pt
-]{mdone}[*]

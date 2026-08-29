@@ -111,41 +111,60 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%                          BOXES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% The same four boxes as msheet.sty, so that material can be moved between
-%% a sheet and a talk without rewriting it.
-\newtcolorbox{mtbcolor}[2][Chocolate]{%
-	size=fbox,
-	fonttitle=\large\sffamily\bfseries,
+%% The same boxes as msheet.sty, under the same semantic names, so that
+%% material moves between a sheet and a talk without rewriting it.  The
+%% palette is shared too; only the frame colours differ from the defaults
+%% where the dark background needs it.
+\colorlet{mtalk@rule}{FireBrick}
+\colorlet{mtalk@experiment}{LightGreen}
+\colorlet{mtalk@example}{DodgerBlue}
+\colorlet{mtalk@info}{LightSeaGreen}
+\colorlet{mtalk@frame}{Chocolate}
+
+\tcbset{
+	mtalk@titled/.style={
+		size=fbox,
+		fonttitle=\large\sffamily\bfseries,
+	},
+}
+
+\newtcolorbox{mrule}[1][Merksatz]{%
+	mtalk@titled,
+	colback=Yellow!6!white,
+	colframe=mtalk@rule!24!black,
+	colbacktitle=mtalk@rule!70!white,
+	coltitle=mtalk@rule!12!black,
+	title={#1}
+}%
+\newtcolorbox{mexperiment}[1][Versuch]{%
+	mtalk@titled,
+	colback=Yellow!6!white,
+	colframe=mtalk@experiment!24!black,
+	colbacktitle=mtalk@experiment!80!white,
+	coltitle=mtalk@experiment!12!black,
+	title={#1}
+}%
+\newtcolorbox{mexample}[1][Beispiel]{%
+	mtalk@titled,
+	colback=Yellow!6!white,
+	colframe=mtalk@example!24!black,
+	colbacktitle=mtalk@example!50!white,
+	coltitle=mtalk@example!12!black,
+	title={#1}
+}%
+\newtcolorbox{minfo}[1][Information]{%
+	mtalk@titled,
+	colback=mtalk@info!12!white,
+	colframe=mtalk@info!24!black,
+	colbacktitle=mtalk@info!50!white,
+	coltitle=mtalk@info!12!black,
+	title={#1}
+}%
+\newtcolorbox{mframe}[2][mtalk@frame]{%
+	mtalk@titled,
 	colback=#1!6!white,
 	colframe=#1!24!black,
 	colbacktitle=#1!50!white,
 	coltitle=#1!12!black,
 	title={#2}
-}%
-\newtcolorbox{mtbred}[1][Merksatz]{%
-	size=fbox,
-	fonttitle=\large\sffamily\bfseries,
-	colback=Yellow!6!white,
-	colframe=FireBrick!24!black,
-	colbacktitle=FireBrick!70!white,
-	coltitle=FireBrick!12!black,
-	title={#1}
-}%
-\newtcolorbox{mtbgreen}[1][Versuch]{%
-	size=fbox,
-	fonttitle=\large\sffamily\bfseries,
-	colback=Yellow!6!white,
-	colframe=LightGreen!24!black,
-	colbacktitle=LightGreen!80!white,
-	coltitle=LightGreen!12!black,
-	title={#1}
-}%
-\newtcolorbox{mtbblue}[1][Beispiel]{%
-	size=fbox,
-	fonttitle=\large\sffamily\bfseries,
-	colback=Yellow!6!white,
-	colframe=DodgerBlue!24!black,
-	colbacktitle=DodgerBlue!50!white,
-	coltitle=DodgerBlue!12!black,
-	title={#1}
 }%

@@ -153,40 +153,68 @@ instead of editing the body:
 
 `\logo{...}`, `\license{...}` and `\attribution{...}` are unchanged.
 
-### Exercise headings and lists
+### Exercise headings
 
 The 2026 rename (a search-and-replace of `exerc` → `section` that also
-produced the environment name `msectioniselist`) has been kept, but the old
-spellings still work as aliases, so nothing has to change:
+produced the environment name `msectioniselist`) stands:
 
 | old | new |
 | --- | --- |
 | `\msexercise` | `\msection` |
 | `\mpexercise` | `\msectionr` |
-| `mexerciselist` | `msectionlist` |
-| `msectioniselist` | `msectionlist` |
 
-The counter is now called `msection` (it used to be `exccnt`); only a
-document that referred to `\theexccnt` directly is affected.
+The aliases that carried the old spellings through v2.1 were **removed in
+v2.2** — they had no uses left. `tools/migrate-msheet-2.2.sh` rewrites them.
+The counter is `msection` (it used to be `exccnt`); only a document that
+referred to `\theexccnt` directly is affected.
 
-### `menumeratex` now actually works
+For the record, since it was a real bug rather than a rename: `menumeratex`
+never produced output, because the `\mscore` block above it was wrapped in
+`\makeatletter` … `\makeatother`, and inside a `.sty` file `@` is *already* a
+letter — that closing `\makeatother` made `@` an ordinary character for the
+rest of the file, so every `\p@enumi` in `menumeratex` was read as `\p`
+followed by the text `@enumi`. Typesetting in the preamble then gave
+`! LaTeX Error: Missing \begin{document}`. The catcode bug is fixed;
+`menumeratex` itself was dropped in v2.2 for lack of use.
 
-`menumeratex` never produced output, and the cause was a catcode bug in
-`msheet.sty`. The `\mscore` block was wrapped in `\makeatletter` …
-`\makeatother` — but inside a `.sty` file `@` is *already* a letter, so that
-closing `\makeatother` turned `@` into an ordinary character **for the rest
-of the file**. Every `\p@enumi` … `\p@enumiv` in `menumeratex` below it was
-therefore read as `\p` followed by the ordinary text `@enumi`, which
-typesets — and typesetting in the preamble gives
+### Boxes and lists renamed (v2.2)
 
-```
-! LaTeX Error: Missing \begin{document}.
-l.190 \providecommand*{\p@enumi}
-```
+The boxes were named after their colour (`mtbred`, `mbgreen`, …), which said
+nothing about what belonged in them — and the default titles gave the game
+away: the red one was always a Merksatz, the green one a Versuch. v2.2 names
+them after their purpose, with a starred form for the untitled variant:
 
-The `\makeatletter`/`\makeatother` pair is gone; nothing else was needed.
-Any document that worked around `menumeratex` being broken can drop the
-workaround.
+| v2.1 | v2.2 |
+| --- | --- |
+| `mtbred` / `mbred` | `mrule` / `mrule*` |
+| `mtbgreen` / `mbgreen` | `mexperiment` / `mexperiment*` |
+| `mtbblue` / `mbblue` | `mexample` / `mexample*` |
+| `mbinfo` | `minfo*` (and a new titled `minfo`) |
+| `mtbcolor` / `mbcolor` | `mframe` / `mframe*` |
+| `\mibcolor[c]{t}`, `\mibgreen{t}` | `\mtag[c]{t}`, `\mtag{t}` |
+| `\mibred{t}`, `\mibblue{t}` | `\mtag[FireBrick]{t}`, `\mtag[DodgerBlue]{t}` |
+| `\mibnpsymbol` | `\mturnsymbol` |
+
+The colours now live in a palette block at the top of the file, so restyling
+is a one-line change rather than a search through nine box definitions.
+`\mtip` and `\msolution` are new shorthands: of the 100 `\mibcolor` calls in
+the teaching material, every single one passed `[green]` and contained either
+“Tipp …” or “Lösung …”.
+
+**Removed with no replacement**, because they had no uses in 780 teaching
+documents: `mtasklist`, `msectionlist`, `mexerciselist`, `msectioniselist`,
+`menumeratex`, `mtaskcolumns`, `mdone`, and the `\msexercise` / `\mpexercise`
+aliases. `menumerate` (567 uses) and `mexccolumns` (27) are what survived.
+
+Run `tools/migrate-msheet-2.2.sh` over a document tree to apply all of the
+above in place; with no arguments it rewrites every `.tex` below the current
+directory.
+
+The starred boxes keep the exact colours and font settings of the boxes they
+replace, which are not always those of the titled form — `mframe*` and
+`minfo*` deliberately leave the body in the document font, as `mbcolor` and
+`mbinfo` did. Verified by rebuilding a nine-document sample from the teaching
+material before and after the rename: **all 24 pages pixel-identical**.
 
 ### fontawesome → fontawesome5
 

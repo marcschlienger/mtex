@@ -110,9 +110,9 @@ Leiten Sie ab. \mscore{4}
 	\exc $f(x) = e^{-x^2}$
 \end{mexccolumns}
 
-\begin{mtbred}[Merksatz]
+\begin{mrule}
 	Äußere Ableitung mal innere Ableitung.
-\end{mtbred}
+\end{mrule}
 
 \mtotalscore
 \end{document}
@@ -210,34 +210,44 @@ Half points work (`\mscore{2.5}`). The total is accumulated globally, so
 
 | Environment | Labels |
 | --- | --- |
-| `mtasklist` | `1.`, `1.1.`, `1.1.1.`, … (four levels) |
-| `msectionlist` | `Aufgabe 1`, `a)`, `i.`, `A.` |
-| `menumerate` | `a)`, `(1)`, `A.`, `I` |
-| `menumeratex` | section-prefixed: `2.1.`, `2.1.1.`, … |
-| `mexccolumns(<n>)` | `n` columns, items separated by `\exc`, labels `a)` |
-| `mtaskcolumns(<n>)` | `n` columns, items separated by `\task`, labels `1.` |
-| `mdone(<n>)` | `n` columns, items separated by `*`, thumbs-up labels |
-
-`mexerciselist` is an alias of `msectionlist`.
+| `menumerate` | `a)`, `(1)`, `A.`, `I` — the everyday enumeration |
+| `mexccolumns(<n>)` | `n` columns of short sub-exercises, separated by `\exc` |
 
 ### Boxes
 
-Titled (the title is the optional argument):
+Each box is named after what goes in it, not after its colour. The starred
+form drops the title; the optional argument replaces the default title.
 
-| Environment | Default title |
+| Environment | Default title | For |
+| --- | --- | --- |
+| `mrule` / `mrule*` | Merksatz | Sätze, Regeln, Merksätze |
+| `mexperiment` / `mexperiment*` | Versuch | Versuche, Vorgehensweisen |
+| `mexample` / `mexample*` | Beispiel | Beispiele, Definitionen |
+| `minfo` / `minfo*` | Information | Hinweise, Randbemerkungen |
+| `mframe[<color>]{<title>}` / `mframe*[<color>]` | — | free title, neutral frame |
+
+```latex
+\begin{mrule}[Satz 1 (Notwendige Bedingung für innere Extremwerte)]
+	…
+\end{mrule}
+```
+
+The colours come from a palette block at the top of `msheet.sty`
+(`msheet@rule`, `msheet@experiment`, …), so restyling every Merksatz in every
+document is a one-line change. `mframe` additionally takes any `xcolor`
+`svgnames` colour as its optional argument.
+
+The same five titled boxes exist in `mtalk`, under the same names, so
+material moves between a sheet and a talk unchanged.
+
+### Inline markers
+
+| Command | Effect |
 | --- | --- |
-| `mtbred[<title>]` | Merksatz |
-| `mtbgreen[<title>]` | Versuch |
-| `mtbblue[<title>]` | Beispiel |
-| `mtbcolor[<color>]{<title>}` | — (colour is the optional argument) |
-
-Untitled: `mbred`, `mbgreen`, `mbblue`, `mbinfo`, `mbcolor[<color>]`.
-
-Inline, for margins and hints: `\mibred{}`, `\mibgreen{}`, `\mibblue{}`,
-`\mibcolor[<color>]{}`. `\mibnp` puts a “Bitte wenden!” marker at the bottom
-of the page and breaks it.
-
-Colours are `xcolor` `svgnames`, so any of those names works as `<color>`.
+| `\mtag[<color>]{<text>}` | a small outlined pill in the running text |
+| `\mtip[<n>]` | `\mtag{Tipp <n>}` |
+| `\msolution[<n>]` | `\mtag{Lösung <n>}` |
+| `\mibnp` | “Bitte wenden!” at the foot of the page, then a page break |
 
 ## Legacy
 
