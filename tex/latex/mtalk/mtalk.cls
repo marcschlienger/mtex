@@ -1,29 +1,17 @@
 %% mtalk.cls -- class for talks (beamer + the Moloch theme).
 %%
 %% Copyright (C) 2026 Marc Schlienger <marc.schlienger@posteo.de>
-%% Released under the LaTeX Project Public License v1.3c or later.
+%% Released under the LaTeX Project Public License v1.3c or later, see
+%% http://www.latex-project.org/lppl.txt
 %%
-%% First draft.  Replaces mposter.cls, which was an untouched copy of
-%% msheet.cls with \LoadClass{tikzposter} and never worked; that file is in
-%% attic/mposter.cls.unfinished.
-%%
-%% Compiles with pdflatex (Moloch does not need fontspec).  The body font is
-%% Bitstream Charter via mathdesign, as in msheet/mtest/mexam; the headings
-%% stay in the sans face so that the Moloch look survives.
+%% Replaces mposter.cls (see attic/mposter.cls.unfinished).  Compiles with
+%% pdflatex; Moloch does not need fontspec.  The body font is Bitstream
+%% Charter via mathdesign, as in msheet/mtest/mexam; the headings stay in
+%% the sans face so that the Moloch look survives.  The metadata and credit
+%% line machinery shared with the sheet classes lives in mtex-base.sty.
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{mtalk}[2026/08/29 v0.1 Class for talks (beamer + moloch).]
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%                          METADATA
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% NB: beamer already defines \logo, so the school logo is set through
-%% \mtalksetup{logo=...} only -- do not add a \logo command here.
-\newcommand*{\mtalk@logo}{Rolf-Benz-Schule.png}
-\newcommand*{\mtalk@license}{}
-\newcommand*{\mtalk@attribution}{}
-
-\DeclareRobustCommand\license[1]{\gdef\mtalk@license{#1}}
-\DeclareRobustCommand\attribution[1]{\gdef\mtalk@attribution{#1}}
+\ProvidesClass{mtalk}[2026/08/29 v0.2 Class for talks (beamer + moloch).]
+\def\mtex@cls{mtalk}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%                          CLASS OPTIONS
@@ -47,8 +35,10 @@
 \fi
 \LoadClass[aspectratio=169, 11pt]{beamer}
 
-\RequirePackage{etoolbox}
-\RequirePackage{keyval}
+%% mtex-base must come after \LoadClass: it checks for beamer to leave
+%% \logo alone (beamer owns that name; use \mtalksetup{logo=...} instead).
+\RequirePackage{mtex-base}
+\renewcommand*{\mtex@creditauthor}{\insertauthor}
 
 \RequirePackage[T1]{fontenc}
 \RequirePackage[ngerman]{babel}
@@ -101,9 +91,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%                          KEY/VALUE INTERFACE
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\define@key{mtalk}{logo}{\renewcommand*{\mtalk@logo}{#1}}
-\define@key{mtalk}{license}{\gdef\mtalk@license{#1}}
-\define@key{mtalk}{attribution}{\gdef\mtalk@attribution{#1}}
+\mtex@definebasekeys{mtalk}
 \newcommand{\mtalksetup}[1]{\setkeys{mtalk}{#1}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -111,16 +99,14 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% The school logo goes on the title frame, not on every slide.  moloch only
 %% draws the "title graphic" template when \inserttitlegraphic is non-empty,
-%% so the logo has to go through \titlegraphic (\mtalk@logo stays
-%% unexpanded, so \mtalksetup{logo=...} still works afterwards).
-\titlegraphic{\includegraphics[width=45mm]{\mtalk@logo}}
+%% so the logo has to go through \titlegraphic (\mtex@logo stays unexpanded,
+%% so \mtalksetup{logo=...} still works afterwards).
+\titlegraphic{\includegraphics[width=45mm]{\mtex@logo}}
 
 %% Copyright / license line in the foot, matching the sheet classes.
-\setbeamertemplate{frame footer}{%
-	\ifdefempty{\mtalk@attribution}{}{\mtalk@attribution\;}%
-	\copyright\;\the\year\;\insertauthor
-	\ifdefempty{\mtalk@license}{}{\;(\mtalk@license)}%
-}
+\setbeamertemplate{frame footer}{\mtexcredit}
+
+\mtex@warnifempty{\mtex@license}{\license}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%                          BOXES
@@ -163,8 +149,3 @@
 	coltitle=DodgerBlue!12!black,
 	title={#1}
 }%
-
-\AtBeginDocument{%
-	\ifdefempty{\mtalk@license}%
-		{\ClassWarningNoLine{mtalk}{No \noexpand\license given}}{}%
-}

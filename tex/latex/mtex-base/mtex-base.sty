@@ -1,0 +1,71 @@
+%% mtex-base.sty -- shared internals of the mtex document classes.
+%%
+%% Copyright (C) 2026 Marc Schlienger <marc.schlienger@posteo.de>
+%% Released under the LaTeX Project Public License v1.3c or later, see
+%% http://www.latex-project.org/lppl.txt
+%%
+%% This is an INTERNAL package, in the way scrartcl relies on scrkbase or
+%% beamer on its beamerbase* files: the msheet/mtest/mexam/mtalk classes
+%% load it themselves, documents never do.  Nothing in here is public API
+%% except the commands the classes re-export (\license, \attribution,
+%% \logo and the \...setup key families).
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{mtex-base}[2026/08/29 v1.0 Shared internals of the mtex classes.]
+
+\@ifundefined{mtex@cls}{%
+	\PackageError{mtex-base}{mtex-base is internal to the mtex classes}%
+		{Load one of the classes (msheet, mtest, mexam, mtalk) instead of
+		 requesting this package from a document.}%
+}{}
+
+\RequirePackage{etoolbox}
+\RequirePackage{keyval}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                          METADATA
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% The defaults are empty; a missing value is reported once at
+%% \begin{document} via \mtex@warnifempty, not on every shipout.
+\newcommand*{\mtex@logo}{Rolf-Benz-Schule.png}
+\newcommand*{\mtex@license}{}
+\newcommand*{\mtex@attribution}{}
+
+\DeclareRobustCommand\license[1]{\gdef\mtex@license{#1}}
+\DeclareRobustCommand\attribution[1]{\gdef\mtex@attribution{#1}}
+%% beamer owns \logo; under mtalk the logo is set with \mtalksetup{logo=...}.
+\@ifclassloaded{beamer}{}{%
+	\DeclareRobustCommand\logo[1]{\gdef\mtex@logo{#1}}%
+}
+
+%% The keys every \...setup command shares.  #1 is the keyval family, i.e.
+%% the class name.
+\newcommand{\mtex@definebasekeys}[1]{%
+	\define@key{#1}{logo}{\renewcommand*{\mtex@logo}{##1}}%
+	\define@key{#1}{license}{\gdef\mtex@license{##1}}%
+	\define@key{#1}{attribution}{\gdef\mtex@attribution{##1}}%
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                          CREDIT LINE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% "attribution  (c) year author  (license)" with the empty parts left out.
+%% Expanded at shipout, so the metadata may be given anywhere in the
+%% preamble.  mtalk redefines \mtex@creditauthor to beamer's \insertauthor.
+\newcommand*{\mtex@creditauthor}{\@author}
+\newcommand{\mtexcredit}{%
+	\ifdefempty{\mtex@attribution}{}{\mtex@attribution\;}%
+	\copyright\;\the\year\;\mtex@creditauthor
+	\ifdefempty{\mtex@license}{}{\;(\mtex@license)}%
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                          HELPERS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% \mtex@warnifempty{\mexam@tasknumber}{\tasknumber} -> a single
+%% "Class mexam Warning: No \tasknumber given" at \begin{document}.
+\newcommand{\mtex@warnifempty}[2]{%
+	\AtBeginDocument{%
+		\ifdefempty{#1}%
+			{\ClassWarningNoLine{\mtex@cls}{No \noexpand#2 given}}{}%
+	}%
+}

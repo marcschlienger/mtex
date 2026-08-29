@@ -236,7 +236,45 @@ coloured links at all, add `\hypersetup{hidelinks}` to the document.
 
 ---
 
-## 4. What changed in `mstuff.sty` (v2.0)
+## 4. The internal base packages (v2.1)
+
+The four classes share their machinery through two **internal** packages in
+`tex/latex/mtex-base/` — the same division of labour as `scrartcl` (which
+delegates to `scrkbase`/`scrbase`/`typearea`) or `beamer` (27 `beamerbase*`
+files). Documents never load them; both raise an error when a document
+tries, so `\usepackage{mtex-base}` fails fast instead of half-working.
+
+- **`mtex-base.sty`** — metadata storage (one `\mtex@...` namespace instead
+  of four per-class copies), `\license`/`\attribution`/`\logo`, the shared
+  keys of the `\...setup` commands, the credit line `\mtexcredit`, and the
+  warn-once-at-`\begin{document}` helper.
+- **`mtex-komabase.sty`** — everything the three `scrartcl` classes repeat:
+  the package loads (fonts, KOMA head/foot, xcolor/tcolorbox/hyperref), the
+  head/foot style, `\mtexlogobox`, the `totcount` page number
+  (`\mtexpagenumber`) and the headsepline-from-page-2 rule.
+
+What deliberately **stays** in each class: the `\DeclareOption` block (LaTeX
+requires options to be declared before `\ProcessOptions`, which runs before
+`\LoadClass`, which runs before any `\RequirePackage` — a base package
+cannot declare its client's options), the geometry numbers, `\maketitle`,
+and the class-specific metadata.
+
+Verified by building every example before and after the refactor with
+`SOURCE_DATE_EPOCH` pinned and comparing page renders at 150 dpi: **all 18
+pages are pixel-identical**, and the text layers match byte for byte.
+
+Behavioural changes, both deliberate:
+
+- `mexam` and `mtest` now use the same credit line as `msheet`: with no
+  `\license` given, the footer still shows `© year author` (before, those
+  two classes left the footer empty). With a license set — the normal case —
+  the output is unchanged.
+- `mexam` and `mtest` gained `\mexamsetup` / `\mtestsetup` with the shared
+  keys (`logo`, `license`, `attribution`) plus their own (`exam`,
+  `tasknumber` / `class`, `testnumber`), matching `\msheetsetup` and
+  `\mtalksetup`.
+
+## 5. What changed in `mstuff.sty` (v2.0)
 
 `mstuff` lives in its own repository now
 ([`marcschlienger/mstuff`](https://github.com/marcschlienger/mstuff)) — it is
@@ -283,7 +321,7 @@ the right order" kind:
 
 ---
 
-## 5. Layout: geometry, not typearea
+## 6. Layout: geometry, not typearea
 
 Short answer to "geometry does not go well with KOMA, right?": **geometry is
 fine with KOMA — what was not fine was `msheet.cls` setting `\textwidth`,

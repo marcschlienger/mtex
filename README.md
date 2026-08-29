@@ -31,6 +31,7 @@ useful without these classes.
 | Package | For |
 | --- | --- |
 | `msheet.sty` | exercise headings, boxes, lists and scores — usable with all four classes |
+| `mtex-base.sty`, `mtex-komabase.sty` | internal — the machinery the classes share; documents never load these |
 
 Examples, each with its compiled PDF, are in `doc/latex/<name>/`. `doc/NOTES.md`
 holds the installation details and the migration notes for documents written
@@ -167,8 +168,11 @@ in the preamble *and* in the document body:
              logo=my-logo.png, license=…, attribution=…}
 ```
 
-`mtalk` has `\mtalksetup{logo=…, license=…, attribution=…}`. It has no
-`\logo` command because beamer already owns that name.
+Every class has one: `\mtestsetup` and `\mexamsetup` accept `logo`,
+`license`, `attribution` plus their class's own fields (`class`/`testnumber`
+and `exam`/`tasknumber`), and `\mtalksetup` accepts the shared three.
+`mtalk` has no `\logo` command because beamer already owns that name — use
+`\mtalksetup{logo=…}` there.
 
 > The old public `\icon` and `\titlebackcolor` commands were removed in v2.0.
 > See [doc/NOTES.md](doc/NOTES.md) for the one-line migration and a

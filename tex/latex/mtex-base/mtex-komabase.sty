@@ -1,0 +1,73 @@
+%% mtex-komabase.sty -- shared setup of the scrartcl-based mtex classes.
+%%
+%% Copyright (C) 2026 Marc Schlienger <marc.schlienger@posteo.de>
+%% Released under the LaTeX Project Public License v1.3c or later, see
+%% http://www.latex-project.org/lppl.txt
+%%
+%% INTERNAL, like mtex-base: loaded by msheet, mtest and mexam right after
+%% their \LoadClass{scrartcl}; never by a document, and not by mtalk, which
+%% is beamer-based and loads mtex-base alone.
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{mtex-komabase}[2026/08/29 v1.0 Shared KOMA setup of the mtex classes.]
+
+\@ifundefined{mtex@cls}{%
+	\PackageError{mtex-komabase}{mtex-komabase is internal to the mtex classes}%
+		{Load one of the classes (msheet, mtest, mexam) instead of
+		 requesting this package from a document.}%
+}{}
+
+\RequirePackage{mtex-base}
+
+\RequirePackage{totcount}
+\RequirePackage{geometry}
+\RequirePackage[footsepline]{scrlayer-scrpage}
+
+\RequirePackage[bitstream-charter]{mathdesign}
+\RequirePackage[T1]{fontenc}
+\RequirePackage{microtype}
+\RequirePackage[ngerman]{babel}
+
+\RequirePackage{setspace}
+
+\RequirePackage{graphicx}
+%% "table" pulls in colortbl; msheet.sty asks for it too, but xcolor is
+%% loaded here first, so the options have to be requested here as well.
+\PassOptionsToPackage{svgnames, table}{xcolor}
+\RequirePackage{xcolor}
+\PassOptionsToPackage{many}{tcolorbox}
+\RequirePackage{tcolorbox}
+\RequirePackage{tabularx}
+
+%% hyperref wants to be loaded after (almost) everything else; it is needed
+%% so that \license{\href{...}{...}} works.
+\RequirePackage{hyperref}
+\hypersetup{colorlinks=true, linkcolor=blue, filecolor=magenta, urlcolor=cyan}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                          HEAD AND FOOT
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% The classes fill the individual fields (\ihead, \ohead, the feet); the
+%% style, the page-number machinery and the headsepline rule are shared.
+\pagestyle{scrheadings}
+\setkomafont{pageheadfoot}{\sffamily\mdseries\scriptsize}
+\chead{}
+
+%% The school logo at its head width; the classes place it in their \ohead.
+%% The logo bitmap is 2582x340px, i.e. 20.15pt tall at width=153pt, which is
+%% why the classes set headheight=24.34654pt in their \geometry call --
+%% geometry keeps the value, typearea/\areaset would overwrite it.
+\newcommand{\mtexlogobox}{\includegraphics[width=153pt]{\mtex@logo}}
+
+%% Page number, shown from page 2 onwards.  totcount reads the page total
+%% from the previous run's .aux file, which is one of the two reasons every
+%% document needs two LaTeX runs (the other is marginnote in msheet.sty).
+\regtotcounter{page}
+\newcommand{\mtexpagenumber}{%
+	\ifnumcomp{\totvalue{page}}{>}{1}{\textbf{\thepage}}{}%
+}
+
+%% Head separation line from page 2 onwards.
+\AddToLayerPageStyleOptions{scrheadings}
+{oninit={%
+		\ifnumcomp{\the\c@page}{>}{1}{\KOMAoptions{headsepline=true}}{\KOMAoptions{headsepline=false}}
+}}

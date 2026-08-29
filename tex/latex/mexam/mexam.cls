@@ -4,30 +4,18 @@
 %% Released under the LaTeX Project Public License v1.3c or later, see
 %% http://www.latex-project.org/lppl.txt
 %%
-%% Merged 2026-08-29 from:
-%%   texmf/tex/latex/mexam/mexam.cls          (2024-06-26, the working class)
-%%   latex/mexam/tex/latex/mexam/mexam.cls    (2026-01-27, an abandoned fork
-%%     that declared itself as "msheet" and used tabu commands without
-%%     loading tabu; its \exam field and its license foot are kept here, its
-%%     table title is available via the class option "tabletitle")
-%% See attic/ for the originals.
+%% The machinery shared with msheet/mtest/mtalk lives in the internal
+%% packages mtex-base.sty and mtex-komabase.sty.  The pre-merge originals
+%% are in attic/.
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{mexam}[2026/08/29 v2.0 Class for writing oral exam sheets.]
-
-\DeclareRobustCommand\logo[1]{\gdef\mexam@logo{#1}}
-\newcommand{\mexam@logo}{Rolf-Benz-Schule.png}
+\ProvidesClass{mexam}[2026/08/29 v2.1 Class for writing oral exam sheets.]
+\def\mtex@cls{mexam}
 
 \DeclareRobustCommand\tasknumber[1]{\gdef\mexam@tasknumber{#1}}
 \newcommand{\mexam@tasknumber}{}
 
 \DeclareRobustCommand\exam[1]{\gdef\mexam@exam{#1}}
 \newcommand{\mexam@exam}{}
-
-\DeclareRobustCommand\license[1]{\gdef\mexam@license{#1}}
-\newcommand{\mexam@license}{}
-
-\DeclareRobustCommand\attribution[1]{\gdef\mexam@attribution{#1}}
-\newcommand{\mexam@attribution}{}
 
 \DeclareOption{twoside}{\OptionNotUsed}
 
@@ -38,64 +26,29 @@
 \DeclareOption{onehalfspacing}{\PassOptionsToPackage{\CurrentOption}{setspace}}
 \DeclareOption{doublespacing}{\PassOptionsToPackage{\CurrentOption}{setspace}}
 
-\PassOptionsToPackage{many}{tcolorbox}
-\PassOptionsToPackage{svgnames, table}{xcolor}
-
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{scrartcl}}
 \ProcessOptions\relax
 \LoadClass{scrartcl}
 
-\RequirePackage{etoolbox}
-\RequirePackage{totcount}
+\RequirePackage{mtex-komabase}
 
-\RequirePackage{geometry}
-\RequirePackage[footsepline]{scrlayer-scrpage}
-
-\RequirePackage[bitstream-charter]{mathdesign}
-\RequirePackage[T1]{fontenc}
-\RequirePackage{microtype}
-\RequirePackage[ngerman]{babel}
-
-\RequirePackage{setspace}
-
-\RequirePackage{graphicx}
-\RequirePackage{xcolor}
-\RequirePackage{tcolorbox}
-\RequirePackage{tabularx}
-
-%% needed so that \license{\href{...}{...}} works, as in msheet.cls
-\RequirePackage{hyperref}
-\hypersetup{colorlinks=true, linkcolor=blue, filecolor=magenta, urlcolor=cyan}
+\mtex@definebasekeys{mexam}
+\define@key{mexam}{tasknumber}{\gdef\mexam@tasknumber{#1}}
+\define@key{mexam}{exam}{\gdef\mexam@exam{#1}}
+\newcommand{\mexamsetup}[1]{\setkeys{mexam}{#1}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%                          PAGE LAYOUT
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% headheight has to be big enough for the 20.15pt logo; geometry keeps
-%% the value, typearea/\areaset would silently overwrite it.
 \geometry{left=15mm, right=15mm, top=25mm, headheight=24.34654pt}
 
-%Head and foot
-\pagestyle{scrheadings}
-\setkomafont{pageheadfoot}{\sffamily\mdseries\scriptsize}
-
-%% \tasknumber used to be stored and warned about but never printed.
 \ihead{\ifdefempty{\mexam@tasknumber}{}{\hspace{2pt}Aufgabe~\mexam@tasknumber}}
-\chead{}
-\ohead{\smash{\includegraphics[width=153pt]{\mexam@logo}}}
-
-%% Evaluated at shipout, so \license/\attribution may be set in the preamble.
-\ifoot{%
-	\ifdefempty{\mexam@attribution}{}{\mexam@attribution\;}%
-	\ifdefempty{\mexam@license}{}{\copyright\;\the\year\;\@author\;(\mexam@license)}%
-}
-\regtotcounter{page}
-\cfoot{\ifnumcomp{\totvalue{page}}{>}{1}{\textbf{\thepage}}{}}
+\ohead{\smash{\mtexlogobox}}
+\ifoot{\mtexcredit}
+\cfoot{\mtexpagenumber}
 \ofoot{}
 
-\AddToLayerPageStyleOptions{scrheadings}
-{oninit={%
-		\ifnumcomp{\the\c@page}{>}{1}{\KOMAoptions{headsepline=true}}{\KOMAoptions{headsepline=false}}
-}}
+\mtex@warnifempty{\mexam@tasknumber}{\tasknumber}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%                          TITLE
@@ -109,8 +62,7 @@
 }%
 
 \if@tabletitle
-	%% Two-by-two cover table (from the abandoned fork; re-implemented with
-	%% tabularx instead of the tabu commands the fork used but never loaded).
+	%% Two-by-two cover table: \exam / \title over Fachlehrer / \date.
 	\renewcommand{\maketitle}{%
 		{
 			\vspace*{-38pt}
@@ -127,6 +79,7 @@
 		}
 	  \medskip
 	}
+	\mtex@warnifempty{\mexam@exam}{\exam}
 \else
 	\renewcommand{\maketitle}{%
 		{
@@ -140,12 +93,3 @@
 	  \medskip
 	}
 \fi
-
-\AtBeginDocument{%
-	\ifdefempty{\mexam@tasknumber}%
-		{\ClassWarningNoLine{mexam}{No \noexpand\tasknumber given}}{}%
-	\if@tabletitle
-		\ifdefempty{\mexam@exam}%
-			{\ClassWarningNoLine{mexam}{No \noexpand\exam given}}{}%
-	\fi
-}

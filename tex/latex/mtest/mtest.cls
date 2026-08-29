@@ -4,15 +4,12 @@
 %% Released under the LaTeX Project Public License v1.3c or later, see
 %% http://www.latex-project.org/lppl.txt
 %%
-%% Updated 2026-08-29: xcolor is now actually loaded (the class asked for
-%% the "svgnames, table" options but never loaded the package), and the
-%% \license / \attribution foot of msheet.cls is available here too.
-%% See attic/ for the original.
+%% The machinery shared with msheet/mexam/mtalk lives in the internal
+%% packages mtex-base.sty and mtex-komabase.sty.  The pre-merge original
+%% is in attic/.
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{mtest}[2026/08/29 v2.0 Class for writing test sheets.]
-
-\DeclareRobustCommand\logo[1]{\gdef\mtest@logo{#1}}
-\newcommand{\mtest@logo}{Rolf-Benz-Schule.png}
+\ProvidesClass{mtest}[2026/08/29 v2.1 Class for writing test sheets.]
+\def\mtex@cls{mtest}
 
 \DeclareRobustCommand\class[1]{\gdef\mtest@class{#1}}
 \newcommand{\mtest@class}{}
@@ -20,71 +17,36 @@
 \DeclareRobustCommand\testnumber[1]{\gdef\mtest@testnumber{#1}}
 \newcommand{\mtest@testnumber}{}
 
-\DeclareRobustCommand\license[1]{\gdef\mtest@license{#1}}
-\newcommand{\mtest@license}{}
-
-\DeclareRobustCommand\attribution[1]{\gdef\mtest@attribution{#1}}
-\newcommand{\mtest@attribution}{}
-
 \DeclareOption{twoside}{\OptionNotUsed}
 
 \DeclareOption{singlespacing}{\PassOptionsToPackage{\CurrentOption}{setspace}}
 \DeclareOption{onehalfspacing}{\PassOptionsToPackage{\CurrentOption}{setspace}}
 \DeclareOption{doublespacing}{\PassOptionsToPackage{\CurrentOption}{setspace}}
 
-\PassOptionsToPackage{left=20mm, right=20mm, top=25mm,
-	headheight=24.34654pt}{geometry}
-\PassOptionsToPackage{footsepline}{scrlayer-scrpage}
-\PassOptionsToPackage{bitstream-charter}{mathdesign}
-\PassOptionsToPackage{T1}{fontenc}
-\PassOptionsToPackage{ngerman}{babel}
-\PassOptionsToPackage{svgnames, table}{xcolor}
-
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{scrartcl}}
 \ProcessOptions\relax
 \LoadClass{scrartcl}
 
-\RequirePackage{etoolbox}
-\RequirePackage{totcount}
-\RequirePackage{geometry}
-\RequirePackage{scrlayer-scrpage}
-\RequirePackage{mathdesign}
-\RequirePackage{fontenc}
-\RequirePackage{microtype}
-\RequirePackage{babel}
-\RequirePackage{setspace}
-\RequirePackage{graphicx}
-\RequirePackage{xcolor}
-\RequirePackage{tabularx}
+\RequirePackage{mtex-komabase}
 
-%% needed so that \license{\href{...}{...}} works, as in msheet.cls
-\RequirePackage{hyperref}
-\hypersetup{colorlinks=true, linkcolor=blue, filecolor=magenta, urlcolor=cyan}
+\mtex@definebasekeys{mtest}
+\define@key{mtest}{class}{\gdef\mtest@class{#1}}
+\define@key{mtest}{testnumber}{\gdef\mtest@testnumber{#1}}
+\newcommand{\mtestsetup}[1]{\setkeys{mtest}{#1}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%                          PAGE LAYOUT
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%Head and foot
-\pagestyle{scrheadings}
-\setkomafont{pageheadfoot}{\sffamily\mdseries\scriptsize}
+\geometry{left=20mm, right=20mm, top=25mm, headheight=24.34654pt}
 
 \ihead{\hspace{2pt}\mtest@class}
-\chead{}
-\ohead{\smash{\includegraphics[width=153pt]{\mtest@logo}}\hspace{2pt}}
-
-%% Evaluated at shipout, so \license/\attribution may be set in the preamble.
-\ifoot{%
-	\ifdefempty{\mtest@attribution}{}{\mtest@attribution\;}%
-	\ifdefempty{\mtest@license}{}{\copyright\;\the\year\;\@author\;(\mtest@license)}%
-}
-\regtotcounter{page}
-\cfoot{\ifnumcomp{\totvalue{page}}{>}{1}{\textbf{\thepage}}{}}
+\ohead{\smash{\mtexlogobox}\hspace{2pt}}
+\ifoot{\mtexcredit}
+\cfoot{\mtexpagenumber}
 \ofoot{}
 
-\AddToLayerPageStyleOptions{scrheadings}
-{oninit={%
-		\ifnumcomp{\the\c@page}{>}{1}{\KOMAoptions{headsepline=true}}{\KOMAoptions{headsepline=false}}
-}}
+\mtex@warnifempty{\mtest@class}{\class}
+\mtex@warnifempty{\mtest@testnumber}{\testnumber}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%                          TITLE
@@ -104,11 +66,4 @@
 		\end{tabularx}
 	}
   \medskip
-}
-
-\AtBeginDocument{%
-	\ifdefempty{\mtest@class}%
-		{\ClassWarningNoLine{mtest}{No \noexpand\class given}}{}%
-	\ifdefempty{\mtest@testnumber}%
-		{\ClassWarningNoLine{mtest}{No \noexpand\testnumber given}}{}%
 }
