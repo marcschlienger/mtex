@@ -151,8 +151,11 @@
 
 %% "Bitte wenden!" at the foot of the page, then a page break.
 \newcommand{\mturnsymbol}{\faAngleDoubleRight\faAngleDoubleRight}
+%% \vspace*, not \vfill: TeX discards vertical glue at the top of a page,
+%% so a plain \vfill silently evaporates whenever \mibnp lands on a freshly
+%% broken page -- and the marker jumps from the bottom to the top.
 \newcommand{\mibnp}{%
-	\vfill\hfill
+	\vspace*{\fill}\hfill
 	\tikz[baseline={(a.base)}]%
 		\node[%
 			draw=msheet@turn!60!black ,
