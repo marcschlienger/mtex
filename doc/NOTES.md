@@ -28,11 +28,20 @@ kpsewhich --var-value=TEXMFHOME          # shows the current value
 tlmgr conf texmf TEXMFHOME /path/to/this/repo
 ```
 
-or simply clone (or symlink) the repository to the default location,
-`~/texmf`, and nothing has to be configured at all.
+or simply clone (or symlink) the repository into the default personal tree,
+so that nothing has to be configured at all. Check where that is first — it
+is **not** `~/texmf` everywhere; MacTeX on this machine reports
+
+```
+$ kpsewhich --var-value=TEXMFHOME
+/Users/marc/Library/texmf
+```
 
 Because there are **two** trees (the classes here, `mstuff` next door), the
-brace-list form is the one to use:
+brace-list form is the one to use. The braces are kpathsea's brace expansion,
+not the shell's, so quote the value; the trees are searched left to right and
+the first match wins; and a literal `~` inside the braces is expanded by
+kpathsea:
 
 ```bash
 export TEXMFHOME="{$HOME/Repos/mtex,$HOME/Repos/mstuff}"

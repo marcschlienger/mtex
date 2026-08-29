@@ -38,27 +38,43 @@ against the pre-2026 versions.
 
 ## Installation
 
-This repository is a TDS tree, so it can be used as a TeX file tree as it is.
-Point `TEXMFHOME` at it, or clone it to `~/texmf`:
-
-```bash
-export TEXMFHOME=/path/to/this/repo
-```
-
-`TEXMFHOME` accepts a brace-delimited list, so this tree and the `mstuff`
-tree work side by side — which is what the examples expect:
+This repository is a TDS tree, so it can be used as a TeX file tree as it
+is. `TEXMFHOME` accepts a **brace-delimited list**, so this tree and the
+`mstuff` tree are used side by side — which is what the examples expect:
 
 ```bash
 export TEXMFHOME="{$HOME/Repos/mtex,$HOME/Repos/mstuff}"
 ```
 
-To make that permanent:
+The braces are kpathsea's own brace expansion, not the shell's, so the value
+must be quoted. Trees are searched left to right and the first match wins.
+A literal `~` inside the braces is expanded by kpathsea and works too.
+
+To make it permanent, put that line in `~/.zshrc`, or write it into the TeX
+configuration:
 
 ```bash
 tlmgr conf texmf TEXMFHOME "{$HOME/Repos/mtex,$HOME/Repos/mstuff}"
 ```
 
-No `texhash` is needed — `TEXMFHOME` is not part of `TEXMFDBS`.
+An alternative that leaves `TEXMFHOME` alone is `TEXMFAUXTREES`, which exists
+for exactly this — bolting extra trees onto the search path. Note the
+**trailing comma**, which is required:
+
+```bash
+export TEXMFAUXTREES="$HOME/Repos/mtex,$HOME/Repos/mstuff,"
+```
+
+If you would rather use the default personal tree and no configuration at
+all, clone into it — but check where it actually is first, because it is
+*not* `~/texmf` on every system (MacTeX uses `~/Library/texmf`):
+
+```bash
+kpsewhich --var-value=TEXMFHOME
+```
+
+No `texhash` is needed in any of these cases — `TEXMFHOME` is not part of
+`TEXMFDBS`, so kpathsea always scans it directly.
 
 ## Building
 
