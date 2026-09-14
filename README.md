@@ -95,6 +95,7 @@ latexmk -pdf my-worksheet.tex
 \usepackage{mstuff}      % optional
 \usepackage{msheet}
 
+\class{1BKFH}
 \title{Ableitungsregeln}
 \author{Marc Schlienger}
 \license{\href{https://creativecommons.org/licenses/by/4.0}{CC BY 4.0}}
@@ -152,7 +153,7 @@ Everything else is handed to `beamer`.
 | `\logo{<file>}` | `msheet`, `mtest`, `mexam` |
 | `\license{<text>}` | all four |
 | `\attribution{<text>}` | all four |
-| `\class{<text>}` | `mtest` — appears in the head |
+| `\class{<text>}` | `msheet`, `mtest` — appears in the head |
 | `\testnumber{<n>}` | `mtest` — appears in the title table |
 | `\tasknumber{<n>}` | `mexam` — appears in the head |
 | `\exam{<text>}` | `mexam` — appears in the `tabletitle` cover table |
@@ -165,8 +166,14 @@ in the preamble *and* in the document body:
 
 ```latex
 \msheetsetup{type=experiment, titlecolor=DarkCyan, icon=my-icon.png,
-             logo=my-logo.png, license=…, attribution=…}
+             class=1BKFH, logo=my-logo.png, license=…, attribution=…}
 ```
+
+In `msheet`, the class designation is optional and defaults to empty without
+a warning. Use `\class{1BKFH}` or `\msheetsetup{class=1BKFH}` to set it,
+and `\class{}` to clear it. It appears only in the inner page header; no
+name-entry field is added. An explicit `\ihead{...}` still overrides this
+header.
 
 Every class has one: `\mtestsetup` and `\mexamsetup` accept `logo`,
 `license`, `attribution` plus their class's own fields (`class`/`testnumber`

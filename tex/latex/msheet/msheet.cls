@@ -9,7 +9,7 @@
 %% specific to lesson sheets: the class options, the layout numbers and
 %% \maketitle.  See doc/NOTES.md for the migration notes.
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{msheet}[2026/08/29 v2.1 Class for writing lesson sheets.]
+\ProvidesClass{msheet}[2026/09/14 v2.2 Class for writing lesson sheets.]
 \def\mtex@cls{msheet}
 
 \newif\if@rounded		\@roundedfalse
@@ -32,6 +32,9 @@
 }
 
 \newcommand*{\msheet@titlebackcolor}{white}
+
+\DeclareRobustCommand\class[1]{\gdef\msheet@class{#1}}
+\newcommand{\msheet@class}{}
 
 \DeclareOption{twoside}{\OptionNotUsed}
 
@@ -59,6 +62,7 @@
 %% Key/value interface.  Everything that used to be a class option or a
 %% public command can be set here, also after \begin{document}.
 \mtex@definebasekeys{msheet}
+\define@key{msheet}{class}{\class{#1}}
 \define@key{msheet}{type}{\msheet@settype{#1}}
 \define@key{msheet}{icon}{\renewcommand*{\msheet@icon}{#1}}
 \define@key{msheet}{titlecolor}{\renewcommand*{\msheet@titlebackcolor}{#1}}
@@ -82,7 +86,7 @@
 }
 \setlength{\footheight}{23.04692pt}
 
-\ihead{}
+\ihead{\msheet@class}
 \ohead{\mtexlogobox\hspace{5pt}}
 \ifoot{\mtexcredit}
 \cfoot{}

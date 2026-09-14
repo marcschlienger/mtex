@@ -9,12 +9,13 @@
 
 \title{An example showcasing the features of the msheet package}
 \author{Marc Schlienger}
+\class{1BKFH}
 
 \attribution{Aufgaben nach \href{https://math.mit.edu/~gs/}{Gilbert Strang}.}
 \license{\href{https://creativecommons.org/licenses/by/4.0}{CC BY 4.0}}
 
 %% Everything above can also be said through the key/value interface:
-%\msheetsetup{type=experiment, titlecolor=DarkCyan, logo=Rolf-Benz-Schule.png}
+%\msheetsetup{type=experiment, class=1BKFH, titlecolor=DarkCyan, logo=Rolf-Benz-Schule.png}
 
 \newcommand{\commandToText}[1]{\texttt{\string#1}}
 
@@ -46,6 +47,10 @@ All of these can also be set with \commandToText{\msheetsetup}, which works in
 the preamble and in the document body. A license and an attribution are given
 with \commandToText{\license} and \commandToText{\attribution} (see the
 footer); both are optional.
+
+The optional class designation is set with \commandToText{\class}, or with
+\texttt{\string\msheetsetup\{class=1BKFH\}}. It appears only in the page
+header. If omitted or set to an empty value, the field stays blank.
 
 \section{The msheet style (msheet.sty)}
 
