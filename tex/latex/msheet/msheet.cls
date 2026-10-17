@@ -86,7 +86,8 @@
 }
 \setlength{\footheight}{23.04692pt}
 
-\ihead{\msheet@class}
+%% Equal field heights align the class baseline with the logo bottom.
+\ihead{\vphantom{\mtexlogobox}\msheet@class}
 \ohead{\mtexlogobox\hspace{5pt}}
 \ifoot{\mtexcredit}
 \cfoot{}

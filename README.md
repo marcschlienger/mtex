@@ -171,7 +171,8 @@ in the preamble *and* in the document body:
 
 In `msheet`, the class designation is optional and defaults to empty without
 a warning. Use `\class{1BKFH}` or `\msheetsetup{class=1BKFH}` to set it,
-and `\class{}` to clear it. It appears only in the inner page header; no
+and `\class{}` to clear it. Its baseline aligns with the bottom of the school logo, giving both fields
+the same distance from the header rule. It appears only in the inner page header; no
 name-entry field is added. An explicit `\ihead{...}` still overrides this
 header.
 
